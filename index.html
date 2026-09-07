@@ -6,7 +6,7 @@
     <title>LogiTrack - Dashboard Operador</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- NUEVO: Librería gratuita para generar Códigos QR -->
+    <!-- Librería para generar Códigos QR -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800">
@@ -49,7 +49,6 @@
                     <thead class="bg-slate-50 border-b border-slate-200">
                         <tr>
                             <th class="p-3">Tracking</th>
-                            <!-- NUEVA COLUMNA PARA EL QR -->
                             <th class="p-3 text-center">Código QR</th>
                             <th class="p-3">Destino</th>
                             <th class="p-3">Peso</th>
@@ -70,14 +69,12 @@
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         async function cargarEnvios() {
-            // Quitamos el ".order('id')" para que la base de datos no arroje error
             const { data, error } = await db.from('shipments').select('*');
             if (error) return console.error("Error cargando datos:", error);
 
             const tabla = document.getElementById('tabla-envios');
             let filasHtml = ''; 
 
-            // 1. Armamos todas las filas primero
             data.forEach(envio => {
                 let colorEstado = '';
                 if (envio.current_status === 'ENTREGADO') colorEstado = 'bg-green-100 text-green-800';
@@ -97,14 +94,13 @@
                 `;
             });
 
-            // Insertamos las filas en la pantalla
             tabla.innerHTML = filasHtml;
 
-            // 2. Esperamos un instante minúsculo y dibujamos los QR de forma segura
             setTimeout(() => {
                 data.forEach(envio => {
                     const contenedor = document.getElementById(`qr-${envio.tracking_number}`);
                     if (contenedor) {
+                        contenedor.innerHTML = '';
                         try {
                             new QRCode(contenedor, {
                                 text: envio.tracking_number,
@@ -119,19 +115,7 @@
                         }
                     }
                 });
-            }, 50);
-        }
-            // 2. Dibujamos los Códigos QR en cada fila
-            data.forEach(envio => {
-                new QRCode(document.getElementById(`qr-${envio.tracking_number}`), {
-                    text: envio.tracking_number, // El QR guardará el número de tracking
-                    width: 64, // Tamaño en píxeles
-                    height: 64,
-                    colorDark : "#0f172a", // Color oscuro del QR
-                    colorLight : "#ffffff", // Fondo blanco
-                    correctLevel : QRCode.CorrectLevel.L
-                });
-            });
+            }, 100);
         }
 
         document.getElementById('form-envio').addEventListener('submit', async (e) => {
