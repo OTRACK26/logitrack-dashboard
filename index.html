@@ -70,21 +70,21 @@
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         async function cargarEnvios() {
-            // Ordenamos para que los paquetes más nuevos salgan arriba
-            const { data, error } = await db.from('shipments').select('*').order('id', { ascending: false });
+            // Quitamos el ".order('id')" para que la base de datos no arroje error
+            const { data, error } = await db.from('shipments').select('*');
             if (error) return console.error("Error cargando datos:", error);
 
             const tabla = document.getElementById('tabla-envios');
-            tabla.innerHTML = ''; 
+            let filasHtml = ''; 
 
-            // 1. Armamos las filas de la tabla primero
+            // 1. Armamos todas las filas primero
             data.forEach(envio => {
                 let colorEstado = '';
                 if (envio.current_status === 'ENTREGADO') colorEstado = 'bg-green-100 text-green-800';
                 else if (envio.current_status === 'EN_REPARTO') colorEstado = 'bg-yellow-100 text-yellow-800';
-                else colorEstado = 'bg-blue-100 text-blue-800'; // Para CREADO
+                else colorEstado = 'bg-blue-100 text-blue-800'; 
 
-                tabla.innerHTML += `
+                filasHtml += `
                     <tr class="hover:bg-slate-50">
                         <td class="p-3 font-mono font-bold text-slate-900">${envio.tracking_number}</td>
                         <td class="p-3 text-center">
@@ -97,6 +97,30 @@
                 `;
             });
 
+            // Insertamos las filas en la pantalla
+            tabla.innerHTML = filasHtml;
+
+            // 2. Esperamos un instante minúsculo y dibujamos los QR de forma segura
+            setTimeout(() => {
+                data.forEach(envio => {
+                    const contenedor = document.getElementById(`qr-${envio.tracking_number}`);
+                    if (contenedor) {
+                        try {
+                            new QRCode(contenedor, {
+                                text: envio.tracking_number,
+                                width: 64,
+                                height: 64,
+                                colorDark : "#0f172a",
+                                colorLight : "#ffffff",
+                                correctLevel : QRCode.CorrectLevel.L
+                            });
+                        } catch (e) {
+                            console.error("Error creando QR", e);
+                        }
+                    }
+                });
+            }, 50);
+        }
             // 2. Dibujamos los Códigos QR en cada fila
             data.forEach(envio => {
                 new QRCode(document.getElementById(`qr-${envio.tracking_number}`), {
