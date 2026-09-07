@@ -38,22 +38,22 @@
         </div>
     </main>
 
-    <script>
-        // ¡Atención! Deberás reemplazar estos dos valores con los de tu bloc de notas
+<script>
         const SUPABASE_URL = 'https://cxaxiflqndariyponszz.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4YXhpZmxxbmRhcml5cG9uc3p6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg3NzMyNTcsImV4cCI6MjEwNDM0OTI1N30.5A5Nmi409xd85-kZD9vOdtX1sALggGq7ilvBSVL-JAg';
 
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Usamos 'db' para evitar el choque de nombres con la librería
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         async function cargarEnvios() {
-            const { data, error } = await supabase.from('shipments').select('*');
+            const { data, error } = await db.from('shipments').select('*');
             if (error) {
                 console.error("Error cargando datos:", error);
                 return;
             }
 
             const tabla = document.getElementById('tabla-envios');
-            tabla.innerHTML = ''; // Limpiar tabla
+            tabla.innerHTML = ''; 
 
             data.forEach(envio => {
                 let colorEstado = envio.current_status === 'ENTREGADO' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800';
@@ -73,16 +73,11 @@
             });
         }
 
-        // Cargar al inicio
         cargarEnvios();
 
-        // Escuchar cambios en tiempo real
-        supabase.channel('custom-all-channel')
+        db.channel('custom-all-channel')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'shipments' }, (payload) => {
-                console.log('¡Cambio detectado!', payload);
-                cargarEnvios(); // Recargar la tabla si un chofer entrega algo
+                cargarEnvios(); 
             })
             .subscribe();
     </script>
-</body>
-</html>
