@@ -17,9 +17,33 @@
         </div>
     </header>
 
-    <main class="p-6 max-w-5xl mx-auto mt-6">
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h2 class="text-lg font-bold text-slate-800 mb-4">Envíos Activos</h2>
+    <main class="p-6 max-w-6xl mx-auto mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- NUEVO: FORMULARIO DE CARGA DE PAQUETES -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-1 h-fit">
+            <h2 class="text-lg font-bold text-slate-800 mb-4">➕ Registrar Nuevo Envío</h2>
+            <form id="form-envio" class="flex flex-col gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-1">Número de Tracking</label>
+                    <input type="text" id="tracking" required class="w-full border border-slate-300 rounded p-2 text-sm uppercase font-mono" placeholder="Ej: TRK-1001">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-1">Dirección de Destino</label>
+                    <input type="text" id="destino" required class="w-full border border-slate-300 rounded p-2 text-sm" placeholder="Calle, Número, Ciudad">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-1">Peso (kg)</label>
+                    <input type="number" step="0.1" id="peso" required class="w-full border border-slate-300 rounded p-2 text-sm" placeholder="Ej: 2.5">
+                </div>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded transition-colors mt-2">
+                    Ingresar al Sistema
+                </button>
+            </form>
+        </div>
+
+        <!-- TABLA DE ENVÍOS ACTUALIZADA -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-2">
+            <h2 class="text-lg font-bold text-slate-800 mb-4">Monitor de Envíos Activos</h2>
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm text-slate-600">
                     <thead class="bg-slate-50 border-b border-slate-200">
@@ -38,40 +62,60 @@
         </div>
     </main>
 
-<script>
+    <script>
         const SUPABASE_URL = 'https://cxaxiflqndariyponszz.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4YXhpZmxxbmRhcml5cG9uc3p6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg3NzMyNTcsImV4cCI6MjEwNDM0OTI1N30.5A5Nmi409xd85-kZD9vOdtX1sALggGq7ilvBSVL-JAg';
-
-        // Usamos 'db' para evitar el choque de nombres con la librería
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         async function cargarEnvios() {
             const { data, error } = await db.from('shipments').select('*');
-            if (error) {
-                console.error("Error cargando datos:", error);
-                return;
-            }
+            if (error) return console.error("Error cargando datos:", error);
 
             const tabla = document.getElementById('tabla-envios');
             tabla.innerHTML = ''; 
 
             data.forEach(envio => {
                 let colorEstado = envio.current_status === 'ENTREGADO' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800';
-                
                 tabla.innerHTML += `
                     <tr class="hover:bg-slate-50">
-                        <td class="p-3 font-mono font-medium text-slate-900">${envio.tracking_number}</td>
+                        <td class="p-3 font-mono font-bold text-slate-900">${envio.tracking_number}</td>
                         <td class="p-3">${envio.destination_address}</td>
                         <td class="p-3">${envio.weight_kg} kg</td>
-                        <td class="p-3">
-                            <span class="px-2 py-1 rounded text-xs font-bold ${colorEstado}">
-                                ${envio.current_status}
-                            </span>
-                        </td>
+                        <td class="p-3"><span class="px-2 py-1 rounded text-xs font-bold ${colorEstado}">${envio.current_status}</span></td>
                     </tr>
                 `;
             });
         }
+
+        // NUEVA FUNCIÓN: Interceptar el formulario y enviar datos a Supabase
+        document.getElementById('form-envio').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Evita que la página recargue al hacer clic
+            
+            const btn = e.target.querySelector('button');
+            btn.innerHTML = 'Guardando...';
+            btn.disabled = true;
+
+            const tracking = document.getElementById('tracking').value.toUpperCase();
+            const destino = document.getElementById('destino').value;
+            const peso = document.getElementById('peso').value;
+
+            // Inserta el nuevo paquete directamente en la base de datos
+            const { error } = await db.from('shipments').insert([{
+                tracking_number: tracking,
+                destination_address: destino,
+                weight_kg: peso,
+                current_status: 'EN CAMINO' 
+            }]);
+
+            if (error) {
+                alert('Hubo un error al registrar el paquete: ' + error.message);
+            } else {
+                e.target.reset(); // Limpia los campos del formulario si fue exitoso
+            }
+
+            btn.innerHTML = 'Ingresar al Sistema';
+            btn.disabled = false;
+        });
 
         cargarEnvios();
 
@@ -81,3 +125,5 @@
             })
             .subscribe();
     </script>
+</body>
+</html>
