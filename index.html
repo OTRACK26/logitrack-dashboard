@@ -6,6 +6,8 @@
     <title>LogiTrack - Dashboard Operador</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- NUEVO: Librería gratuita para generar Códigos QR -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800">
     <header class="bg-slate-900 text-white p-4 shadow-md flex justify-between items-center">
@@ -19,7 +21,6 @@
 
     <main class="p-6 max-w-6xl mx-auto mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        <!-- NUEVO: FORMULARIO DE CARGA DE PAQUETES -->
         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-1 h-fit">
             <h2 class="text-lg font-bold text-slate-800 mb-4">➕ Registrar Nuevo Envío</h2>
             <form id="form-envio" class="flex flex-col gap-4">
@@ -41,7 +42,6 @@
             </form>
         </div>
 
-        <!-- TABLA DE ENVÍOS ACTUALIZADA -->
         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-2">
             <h2 class="text-lg font-bold text-slate-800 mb-4">Monitor de Envíos Activos</h2>
             <div class="overflow-x-auto">
@@ -49,6 +49,8 @@
                     <thead class="bg-slate-50 border-b border-slate-200">
                         <tr>
                             <th class="p-3">Tracking</th>
+                            <!-- NUEVA COLUMNA PARA EL QR -->
+                            <th class="p-3 text-center">Código QR</th>
                             <th class="p-3">Destino</th>
                             <th class="p-3">Peso</th>
                             <th class="p-3">Estado Actual</th>
@@ -68,28 +70,48 @@
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         async function cargarEnvios() {
-            const { data, error } = await db.from('shipments').select('*');
+            // Ordenamos para que los paquetes más nuevos salgan arriba
+            const { data, error } = await db.from('shipments').select('*').order('id', { ascending: false });
             if (error) return console.error("Error cargando datos:", error);
 
             const tabla = document.getElementById('tabla-envios');
             tabla.innerHTML = ''; 
 
+            // 1. Armamos las filas de la tabla primero
             data.forEach(envio => {
-                let colorEstado = envio.current_status === 'ENTREGADO' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800';
+                let colorEstado = '';
+                if (envio.current_status === 'ENTREGADO') colorEstado = 'bg-green-100 text-green-800';
+                else if (envio.current_status === 'EN_REPARTO') colorEstado = 'bg-yellow-100 text-yellow-800';
+                else colorEstado = 'bg-blue-100 text-blue-800'; // Para CREADO
+
                 tabla.innerHTML += `
                     <tr class="hover:bg-slate-50">
                         <td class="p-3 font-mono font-bold text-slate-900">${envio.tracking_number}</td>
+                        <td class="p-3 text-center">
+                            <div id="qr-${envio.tracking_number}" class="inline-block p-1 bg-white border border-slate-200 rounded shadow-sm"></div>
+                        </td>
                         <td class="p-3">${envio.destination_address}</td>
                         <td class="p-3">${envio.weight_kg} kg</td>
                         <td class="p-3"><span class="px-2 py-1 rounded text-xs font-bold ${colorEstado}">${envio.current_status}</span></td>
                     </tr>
                 `;
             });
+
+            // 2. Dibujamos los Códigos QR en cada fila
+            data.forEach(envio => {
+                new QRCode(document.getElementById(`qr-${envio.tracking_number}`), {
+                    text: envio.tracking_number, // El QR guardará el número de tracking
+                    width: 64, // Tamaño en píxeles
+                    height: 64,
+                    colorDark : "#0f172a", // Color oscuro del QR
+                    colorLight : "#ffffff", // Fondo blanco
+                    correctLevel : QRCode.CorrectLevel.L
+                });
+            });
         }
 
-        // NUEVA FUNCIÓN: Interceptar el formulario y enviar datos a Supabase
         document.getElementById('form-envio').addEventListener('submit', async (e) => {
-            e.preventDefault(); // Evita que la página recargue al hacer clic
+            e.preventDefault(); 
             
             const btn = e.target.querySelector('button');
             btn.innerHTML = 'Guardando...';
@@ -99,7 +121,6 @@
             const destino = document.getElementById('destino').value;
             const peso = document.getElementById('peso').value;
 
-            // Inserta el nuevo paquete directamente en la base de datos
             const { error } = await db.from('shipments').insert([{
                 tracking_number: tracking,
                 destination_address: destino,
@@ -110,7 +131,7 @@
             if (error) {
                 alert('Hubo un error al registrar el paquete: ' + error.message);
             } else {
-                e.target.reset(); // Limpia los campos del formulario si fue exitoso
+                e.target.reset(); 
             }
 
             btn.innerHTML = 'Ingresar al Sistema';
