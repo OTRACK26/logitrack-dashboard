@@ -3,63 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LogiTrack - Dashboard Operador</title>
+    <title>LogiTrack - Centro de Control Logístico</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Librería para generar Códigos QR -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
-<body class="bg-slate-100 font-sans text-slate-800">
-    <header class="bg-slate-900 text-white p-4 shadow-md flex justify-between items-center">
-        <h1 class="font-bold text-xl flex items-center gap-2">📦 LogiTrack MVP | Centro de Control</h1>
-        <div class="flex items-center gap-3">
-            <span class="flex items-center gap-2 text-sm bg-emerald-900/50 text-emerald-400 px-3 py-1 rounded-full">
-                <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> En Vivo
-            </span>
+<body class="bg-slate-100 font-sans text-slate-800 min-h-screen">
+
+    <!-- Header / Navbar -->
+    <header class="bg-slate-900 text-white p-4 shadow-lg sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">📦</span>
+                <div>
+                    <h1 class="font-bold text-xl leading-none">LogiTrack MVP</h1>
+                    <span class="text-xs text-slate-400">Centro de Control Logístico</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="flex items-center gap-2 text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-3 py-1.5 rounded-full font-medium">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> Sincronizado en Vivo
+                </span>
+            </div>
         </div>
     </header>
 
-    <main class="p-6 max-w-6xl mx-auto mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-1 h-fit">
-            <h2 class="text-lg font-bold text-slate-800 mb-4">➕ Registrar Nuevo Envío</h2>
-            <form id="form-envio" class="flex flex-col gap-4">
-                <div>
-                    <label class="block text-sm font-semibold text-slate-600 mb-1">Número de Tracking</label>
-                    <input type="text" id="tracking" required class="w-full border border-slate-300 rounded p-2 text-sm uppercase font-mono" placeholder="Ej: TRK-1001">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-slate-600 mb-1">Dirección de Destino</label>
-                    <input type="text" id="destino" required class="w-full border border-slate-300 rounded p-2 text-sm" placeholder="Calle, Número, Ciudad">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-slate-600 mb-1">Peso (kg)</label>
-                    <input type="number" step="0.1" id="peso" required class="w-full border border-slate-300 rounded p-2 text-sm" placeholder="Ej: 2.5">
-                </div>
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded transition-colors mt-2">
-                    Ingresar al Sistema
-                </button>
-            </form>
-        </div>
+    <main class="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
 
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-2">
-            <h2 class="text-lg font-bold text-slate-800 mb-4">Monitor de Envíos Activos</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-600">
-                    <thead class="bg-slate-50 border-b border-slate-200">
-                        <tr>
-                            <th class="p-3">Tracking</th>
-                            <th class="p-3 text-center">Código QR</th>
-                            <th class="p-3">Destino</th>
-                            <th class="p-3">Peso</th>
-                            <th class="p-3">Estado Actual</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabla-envios" class="divide-y divide-slate-100">
-                        <!-- Los datos aparecerán aquí -->
-                    </tbody>
-                </table>
+        <!-- METRICAS / KPIs -->
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                <p class="text-xs font-semibold uppercase text-slate-400">Total Envíos</p>
+                <p id="kpi-total" class="text-2xl font-black text-slate-800 mt-1">0</p>
             </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-blue-500">
+                <p class="text-xs font-semibold uppercase text-blue-600">En Almacén (Creado)</p>
+                <p id="kpi-creado" class="text-2xl font-black text-blue-700 mt-1">0</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-amber-500">
+                <p class="text-xs font-semibold uppercase text-amber-600">En Reparto</p>
+                <p id="kpi-reparto" class="text-2xl font-black text-amber-700 mt-1">0</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-emerald-500">
+                <p class="text-xs font-semibold uppercase text-emerald-600">Entregados</p>
+                <p id="kpi-entregado" class="text-2xl font-black text-emerald-700 mt-1">0</p>
+            </div>
+        </section>
+
+        <!-- SECCION PRINCIPAL: FORMULARIO Y MONITOR -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- FORMULARIO REGISTRO -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-1 h-fit">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <span>➕</span> Registrar Nuevo Envío
+                </h2>
+                <form id="form-envio" class="flex flex-col gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Número de Tracking</label>
+                        <input type="text" id="tracking" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm uppercase font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Ej: TRK-1001">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Dirección de Destino</label>
+                        <input type="text" id="destino" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Calle, Número, Ciudad">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Peso (kg)</label>
+                        <input type="number" step="0.1" id="peso" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Ej: 2.5">
+                    </div>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors mt-2 shadow-sm">
+                        Ingresar al Sistema
+                    </button>
+                </form>
+            </div>
+
+            <!-- MONITOR DE ENVIOS CON BUSCADOR Y FILTROS -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-2 flex flex-col">
+                
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+                    <h2 class="text-lg font-bold text-slate-800">Monitor de Envíos Activos</h2>
+                    
+                    <!-- Buscador -->
+                    <input type="text" id="buscador" onkeyup="filtrarTabla()" placeholder="🔍 Buscar por tracking o destino..." class="w-full sm:w-64 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <!-- Filtros por Estado -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button onclick="filtrarEstado('TODOS')" class="btn-filtro bg-slate-800 text-white text-xs px-3 py-1.5 rounded-full font-semibold">Todos</button>
+                    <button onclick="filtrarEstado('CREADO')" class="btn-filtro bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs px-3 py-1.5 rounded-full font-semibold">Creados</button>
+                    <button onclick="filtrarEstado('EN_REPARTO')" class="btn-filtro bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs px-3 py-1.5 rounded-full font-semibold">En Reparto</button>
+                    <button onclick="filtrarEstado('ENTREGADO')" class="btn-filtro bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs px-3 py-1.5 rounded-full font-semibold">Entregados</button>
+                </div>
+
+                <!-- Tabla -->
+                <div class="overflow-x-auto rounded-lg border border-slate-200">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase font-semibold text-slate-500">
+                            <tr>
+                                <th class="p-3">Tracking</th>
+                                <th class="p-3 text-center">Código QR</th>
+                                <th class="p-3">Destino</th>
+                                <th class="p-3">Peso</th>
+                                <th class="p-3">Estado Actual</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-envios" class="divide-y divide-slate-100">
+                            <!-- Los envíos se cargarán aquí -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
         </div>
     </main>
 
@@ -68,59 +123,97 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4YXhpZmxxbmRhcml5cG9uc3p6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg3NzMyNTcsImV4cCI6MjEwNDM0OTI1N30.5A5Nmi409xd85-kZD9vOdtX1sALggGq7ilvBSVL-JAg';
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        let enviosCache = [];
+        let estadoFiltroActual = 'TODOS';
+
         async function cargarEnvios() {
             const { data, error } = await db.from('shipments').select('*');
             if (error) return console.error("Error cargando datos:", error);
 
-            const tabla = document.getElementById('tabla-envios');
-            let filasHtml = ''; 
+            enviosCache = data;
+            actualizarKPIs(data);
+            renderizarTabla();
+        }
 
-            data.forEach(envio => {
-                let colorEstado = '';
-                if (envio.current_status === 'ENTREGADO') colorEstado = 'bg-green-100 text-green-800';
-                else if (envio.current_status === 'EN_REPARTO') colorEstado = 'bg-yellow-100 text-yellow-800';
-                else colorEstado = 'bg-blue-100 text-blue-800'; 
+        function actualizarKPIs(data) {
+            document.getElementById('kpi-total').innerText = data.length;
+            document.getElementById('kpi-creado').innerText = data.filter(e => e.current_status === 'CREADO').length;
+            document.getElementById('kpi-reparto').innerText = data.filter(e => e.current_status === 'EN_REPARTO').length;
+            document.getElementById('kpi-entregado').innerText = data.filter(e => e.current_status === 'ENTREGADO').length;
+        }
+
+        function renderizarTabla() {
+            const tabla = document.getElementById('tabla-envios');
+            const textoBusqueda = document.getElementById('buscador').value.toLowerCase();
+            
+            let enviosFiltrados = enviosCache.filter(e => {
+                const cumpleEstado = estadoFiltroActual === 'TODOS' || e.current_status === estadoFiltroActual;
+                const cumpleBusqueda = e.tracking_number.toLowerCase().includes(textoBusqueda) || 
+                                       e.destination_address.toLowerCase().includes(textoBusqueda);
+                return cumpleEstado && cumpleBusqueda;
+            });
+
+            if (enviosFiltrados.length === 0) {
+                tabla.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">No se encontraron envíos.</td></tr>`;
+                return;
+            }
+
+            let filasHtml = '';
+            enviosFiltrados.forEach(envio => {
+                let badgeStyle = 'bg-blue-100 text-blue-800 border-blue-200';
+                if (envio.current_status === 'ENTREGADO') badgeStyle = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+                else if (envio.current_status === 'EN_REPARTO') badgeStyle = 'bg-amber-100 text-amber-800 border-amber-200';
 
                 filasHtml += `
-                    <tr class="hover:bg-slate-50">
+                    <tr class="hover:bg-slate-50 transition-colors">
                         <td class="p-3 font-mono font-bold text-slate-900">${envio.tracking_number}</td>
                         <td class="p-3 text-center">
                             <div id="qr-${envio.tracking_number}" class="inline-block p-1 bg-white border border-slate-200 rounded shadow-sm"></div>
                         </td>
-                        <td class="p-3">${envio.destination_address}</td>
-                        <td class="p-3">${envio.weight_kg} kg</td>
-                        <td class="p-3"><span class="px-2 py-1 rounded text-xs font-bold ${colorEstado}">${envio.current_status}</span></td>
+                        <td class="p-3 font-medium text-slate-700">${envio.destination_address}</td>
+                        <td class="p-3 text-slate-500">${envio.weight_kg} kg</td>
+                        <td class="p-3">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold border ${badgeStyle}">
+                                ${envio.current_status}
+                            </span>
+                        </td>
                     </tr>
                 `;
             });
 
             tabla.innerHTML = filasHtml;
 
+            // Generación de Códigos QR
             setTimeout(() => {
-                data.forEach(envio => {
+                enviosFiltrados.forEach(envio => {
                     const contenedor = document.getElementById(`qr-${envio.tracking_number}`);
                     if (contenedor) {
                         contenedor.innerHTML = '';
-                        try {
-                            new QRCode(contenedor, {
-                                text: envio.tracking_number,
-                                width: 64,
-                                height: 64,
-                                colorDark : "#0f172a",
-                                colorLight : "#ffffff",
-                                correctLevel : QRCode.CorrectLevel.L
-                            });
-                        } catch (e) {
-                            console.error("Error creando QR", e);
-                        }
+                        new QRCode(contenedor, {
+                            text: envio.tracking_number,
+                            width: 56,
+                            height: 56,
+                            colorDark : "#0f172a",
+                            colorLight : "#ffffff",
+                            correctLevel : QRCode.CorrectLevel.L
+                        });
                     }
                 });
-            }, 100);
+            }, 50);
         }
 
+        function filtrarTabla() {
+            renderizarTabla();
+        }
+
+        function filtrarEstado(estado) {
+            estadoFiltroActual = estado;
+            renderizarTabla();
+        }
+
+        // Formulario
         document.getElementById('form-envio').addEventListener('submit', async (e) => {
             e.preventDefault(); 
-            
             const btn = e.target.querySelector('button');
             btn.innerHTML = 'Guardando...';
             btn.disabled = true;
@@ -137,7 +230,7 @@
             }]);
 
             if (error) {
-                alert('Hubo un error al registrar el paquete: ' + error.message);
+                alert('Error al registrar el paquete: ' + error.message);
             } else {
                 e.target.reset(); 
             }
@@ -148,8 +241,9 @@
 
         cargarEnvios();
 
+        // Escuchador en tiempo real
         db.channel('custom-all-channel')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'shipments' }, (payload) => {
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'shipments' }, () => {
                 cargarEnvios(); 
             })
             .subscribe();
