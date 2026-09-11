@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LogiTrack - Centro de Control Logístico</title>
+    <title>LogiTrack - Centro de Control & Gestión de Viajes</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -14,16 +14,16 @@
     <header class="bg-slate-900 text-white p-4 shadow-lg sticky top-0 z-40">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
-                <span class="text-2xl">📦</span>
+                <span class="text-2xl">🚛</span>
                 <div>
-                    <h1 class="font-bold text-xl leading-none">LogiTrack MVP</h1>
-                    <span class="text-xs text-slate-400">Centro de Control Logístico</span>
+                    <h1 class="font-bold text-xl leading-none">LogiTrack TMS</h1>
+                    <span class="text-xs text-slate-400">Gestión de Operaciones & Viajes</span>
                 </div>
             </div>
             <div class="flex items-center gap-3">
-                <span class="flex items-center gap-2 text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-3 py-1.5 rounded-full font-medium">
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> Sincronizado en Vivo
-                </span>
+                <button onclick="abrirModalOP()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition-colors shadow flex items-center gap-2">
+                    <span>➕</span> Nueva Orden de Operación (OP)
+                </button>
             </div>
         </div>
     </header>
@@ -33,11 +33,11 @@
         <!-- METRICAS / KPIs -->
         <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                <p class="text-xs font-semibold uppercase text-slate-400">Total Envíos</p>
-                <p id="kpi-total" class="text-2xl font-black text-slate-800 mt-1">0</p>
+                <p class="text-xs font-semibold uppercase text-slate-400">Total Viajes / OPs</p>
+                <p id="kpi-ops" class="text-2xl font-black text-slate-800 mt-1">0</p>
             </div>
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-blue-500">
-                <p class="text-xs font-semibold uppercase text-blue-600">En Almacén (Creado)</p>
+                <p class="text-xs font-semibold uppercase text-blue-600">En Almacén (Creados)</p>
                 <p id="kpi-creado" class="text-2xl font-black text-blue-700 mt-1">0</p>
             </div>
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-amber-500">
@@ -50,73 +50,131 @@
             </div>
         </section>
 
-        <!-- SECCION PRINCIPAL: FORMULARIO Y MONITOR -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- FORMULARIO REGISTRO -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-1 h-fit">
-                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    <span>➕</span> Registrar Nuevo Envío
-                </h2>
-                <form id="form-envio" class="flex flex-col gap-4">
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Número de Tracking</label>
-                        <input type="text" id="tracking" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm uppercase font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Ej: TRK-1001">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Dirección de Destino</label>
-                        <input type="text" id="destino" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Calle, Número, Ciudad">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Peso (kg)</label>
-                        <input type="number" step="0.1" id="peso" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Ej: 2.5">
-                    </div>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors mt-2 shadow-sm">
-                        Ingresar al Sistema
-                    </button>
-                </form>
+        <!-- SECCION VIAJES Y OPERACIONES -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center justify-between">
+                <span>📋 Órdenes de Operación (OPs) & Viajes Programados</span>
+            </h2>
+            <div class="overflow-x-auto rounded-lg border border-slate-200">
+                <table class="w-full text-left text-sm text-slate-600">
+                    <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase font-semibold text-slate-500">
+                        <tr>
+                            <th class="p-3">Nº OP</th>
+                            <th class="p-3">Cliente</th>
+                            <th class="p-3">Destino / Localidad</th>
+                            <th class="p-3">Transporte / Chofer</th>
+                            <th class="p-3">Unidad / Patentes</th>
+                            <th class="p-3">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-ops" class="divide-y divide-slate-100">
+                        <tr><td colspan="6" class="p-4 text-center text-slate-400">Cargando viajes...</td></tr>
+                    </tbody>
+                </table>
             </div>
-
-            <!-- MONITOR DE ENVIOS CON BUSCADOR Y FILTROS -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-2 flex flex-col">
-                
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-                    <h2 class="text-lg font-bold text-slate-800">Monitor de Envíos Activos</h2>
-                    
-                    <!-- Buscador -->
-                    <input type="text" id="buscador" onkeyup="filtrarTabla()" placeholder="🔍 Buscar por tracking o destino..." class="w-full sm:w-64 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                </div>
-
-                <!-- Filtros por Estado -->
-                <div class="flex flex-wrap gap-2 mb-4">
-                    <button onclick="filtrarEstado('TODOS')" class="btn-filtro bg-slate-800 text-white text-xs px-3 py-1.5 rounded-full font-semibold">Todos</button>
-                    <button onclick="filtrarEstado('CREADO')" class="btn-filtro bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs px-3 py-1.5 rounded-full font-semibold">Creados</button>
-                    <button onclick="filtrarEstado('EN_REPARTO')" class="btn-filtro bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs px-3 py-1.5 rounded-full font-semibold">En Reparto</button>
-                    <button onclick="filtrarEstado('ENTREGADO')" class="btn-filtro bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs px-3 py-1.5 rounded-full font-semibold">Entregados</button>
-                </div>
-
-                <!-- Tabla -->
-                <div class="overflow-x-auto rounded-lg border border-slate-200">
-                    <table class="w-full text-left text-sm text-slate-600">
-                        <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase font-semibold text-slate-500">
-                            <tr>
-                                <th class="p-3">Tracking</th>
-                                <th class="p-3 text-center">Código QR</th>
-                                <th class="p-3">Destino</th>
-                                <th class="p-3">Peso</th>
-                                <th class="p-3">Estado Actual</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-envios" class="divide-y divide-slate-100">
-                            <!-- Los envíos se cargarán aquí -->
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-
         </div>
+
+        <!-- MONITOR DE PAQUETES/ENVÍOS -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+                <h2 class="text-lg font-bold text-slate-800">📦 Monitor de Envíos Individuales</h2>
+                <input type="text" id="buscador" onkeyup="filtrarTabla()" placeholder="🔍 Buscar por tracking o destino..." class="w-full sm:w-64 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+
+            <div class="overflow-x-auto rounded-lg border border-slate-200">
+                <table class="w-full text-left text-sm text-slate-600">
+                    <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase font-semibold text-slate-500">
+                        <tr>
+                            <th class="p-3">Tracking</th>
+                            <th class="p-3 text-center">Código QR</th>
+                            <th class="p-3">Destino</th>
+                            <th class="p-3">Peso</th>
+                            <th class="p-3">Estado Actual</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-envios" class="divide-y divide-slate-100">
+                        <!-- Envíos cargados vía JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </main>
+
+    <!-- MODAL DE CREACIÓN DE NUEVA OP -->
+    <div id="modal-op" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
+                <h3 class="text-lg font-bold text-slate-900">🚛 Alta de Orden de Operación (OP)</h3>
+                <button onclick="cerrarModalOP()" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
+            </div>
+
+            <form id="form-op" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                <!-- Cliente y Ruta -->
+                <div class="md:col-span-2 text-xs font-bold uppercase text-blue-600 tracking-wider">1. Cliente y Destino</div>
+                
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Cliente Comercial *</label>
+                    <input type="text" id="op-cliente" required placeholder="Ej: Arcor S.A." class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Localidad de Destino *</label>
+                    <input type="text" id="op-localidad" required placeholder="Ej: Rosario, Santa Fe" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Dirección de Origen *</label>
+                    <input type="text" id="op-origen" required placeholder="Ej: Av. Brasil 1200, CABA" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Dirección de Destino *</label>
+                    <input type="text" id="op-destino" required placeholder="Ej: San Martín 450, Centro" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                </div>
+
+                <!-- Transporte y Recursos -->
+                <div class="md:col-span-2 text-xs font-bold uppercase text-blue-600 tracking-wider mt-2">2. Empresa, Chofer y Vehículo</div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Empresa de Transporte *</label>
+                    <input type="text" id="op-transporte" required placeholder="Ej: Logística Expreso Sur" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Nombre del Chofer *</label>
+                    <input type="text" id="op-chofer" required placeholder="Ej: Mario Gómez" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">DNI del Chofer</label>
+                    <input type="text" id="op-dni-chofer" placeholder="Ej: 28456789" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Tipo de Unidad *</label>
+                    <select id="op-unidad" required class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
+                        <option value="">Seleccione tipo...</option>
+                        <option value="Furgón Utilitario">Furgón / Utilitario</option>
+                        <option value="Camión Chasis">Camión Chasis</option>
+                        <option value="Semirremolque">Semirremolque</option>
+                        <option value="Balancín">Camión Balancín</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Patente Camión / Tractor *</label>
+                    <input type="text" id="op-patente-principal" required placeholder="Ej: AA123CD" class="w-full border border-slate-300 rounded-lg p-2 text-sm uppercase">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Patente Acoplado / Semi (Opcional)</label>
+                    <input type="text" id="op-patente-acoplado" placeholder="Ej: AB987ZX" class="w-full border border-slate-300 rounded-lg p-2 text-sm uppercase">
+                </div>
+
+                <div class="md:col-span-2 flex justify-end gap-3 mt-4 pt-4 border-t border-slate-200">
+                    <button type="button" onclick="cerrarModalOP()" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-semibold">Cancelar</button>
+                    <button type="submit" id="btn-guardar-op" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold shadow">
+                        Generar OP Automática
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
 
     <script>
         const SUPABASE_URL = 'https://cxaxiflqndariyponszz.supabase.co';
@@ -124,34 +182,83 @@
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let enviosCache = [];
-        let estadoFiltroActual = 'TODOS';
+        let tripsCache = [];
+
+        function abrirModalOP() {
+            document.getElementById('modal-op').classList.remove('hidden');
+        }
+
+        function cerrarModalOP() {
+            document.getElementById('modal-op').classList.add('hidden');
+            document.getElementById('form-op').reset();
+        }
+
+        async function cargarTodo() {
+            await Promise.all([cargarTrips(), cargarEnvios()]);
+        }
+
+        async function cargarTrips() {
+            const { data, error } = await db.from('trips').select('*').order('id', { ascending: false });
+            if (error) return console.error("Error cargando viajes:", error);
+
+            tripsCache = data;
+            document.getElementById('kpi-ops').innerText = data.length;
+
+            const tabla = document.getElementById('tabla-ops');
+            if (data.length === 0) {
+                tabla.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">No hay órdenes de operación registradas. Presiona "Nueva Orden de Operación" para crear una.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            data.forEach(trip => {
+                html += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-3 font-mono font-bold text-blue-700">${trip.op_number}</td>
+                        <td class="p-3 font-bold text-slate-800">${trip.client_name}</td>
+                        <td class="p-3">
+                            <div class="font-medium text-slate-800">${trip.destination_city}</div>
+                            <div class="text-xs text-slate-500">${trip.destination_address}</div>
+                        </td>
+                        <td class="p-3">
+                            <div class="font-medium text-slate-800">${trip.carrier_company}</div>
+                            <div class="text-xs text-slate-500">👨‍✈️ ${trip.driver_name}</div>
+                        </td>
+                        <td class="p-3">
+                            <div class="text-xs font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded w-fit">${trip.unit_type}</div>
+                            <div class="font-mono text-xs text-slate-600 mt-1">🚘 ${trip.vehicle_plate} ${trip.trailer_plate ? '/ ' + trip.trailer_plate : ''}</div>
+                        </td>
+                        <td class="p-3">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200">
+                                ${trip.status}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+            tabla.innerHTML = html;
+        }
 
         async function cargarEnvios() {
             const { data, error } = await db.from('shipments').select('*');
-            if (error) return console.error("Error cargando datos:", error);
+            if (error) return console.error("Error cargando envíos:", error);
 
             enviosCache = data;
-            actualizarKPIs(data);
-            renderizarTabla();
-        }
-
-        function actualizarKPIs(data) {
-            document.getElementById('kpi-total').innerText = data.length;
             document.getElementById('kpi-creado').innerText = data.filter(e => e.current_status === 'CREADO').length;
             document.getElementById('kpi-reparto').innerText = data.filter(e => e.current_status === 'EN_REPARTO').length;
             document.getElementById('kpi-entregado').innerText = data.filter(e => e.current_status === 'ENTREGADO').length;
+
+            renderizarTablaEnvios();
         }
 
-        function renderizarTabla() {
+        function renderizarTablaEnvios() {
             const tabla = document.getElementById('tabla-envios');
             const textoBusqueda = document.getElementById('buscador').value.toLowerCase();
             
-            let enviosFiltrados = enviosCache.filter(e => {
-                const cumpleEstado = estadoFiltroActual === 'TODOS' || e.current_status === estadoFiltroActual;
-                const cumpleBusqueda = e.tracking_number.toLowerCase().includes(textoBusqueda) || 
-                                       e.destination_address.toLowerCase().includes(textoBusqueda);
-                return cumpleEstado && cumpleBusqueda;
-            });
+            let enviosFiltrados = enviosCache.filter(e => 
+                e.tracking_number.toLowerCase().includes(textoBusqueda) || 
+                e.destination_address.toLowerCase().includes(textoBusqueda)
+            );
 
             if (enviosFiltrados.length === 0) {
                 tabla.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">No se encontraron envíos.</td></tr>`;
@@ -183,7 +290,6 @@
 
             tabla.innerHTML = filasHtml;
 
-            // Generación de Códigos QR
             setTimeout(() => {
                 enviosFiltrados.forEach(envio => {
                     const contenedor = document.getElementById(`qr-${envio.tracking_number}`);
@@ -191,8 +297,8 @@
                         contenedor.innerHTML = '';
                         new QRCode(contenedor, {
                             text: envio.tracking_number,
-                            width: 56,
-                            height: 56,
+                            width: 52,
+                            height: 52,
                             colorDark : "#0f172a",
                             colorLight : "#ffffff",
                             correctLevel : QRCode.CorrectLevel.L
@@ -203,49 +309,54 @@
         }
 
         function filtrarTabla() {
-            renderizarTabla();
+            renderizarTablaEnvios();
         }
 
-        function filtrarEstado(estado) {
-            estadoFiltroActual = estado;
-            renderizarTabla();
-        }
-
-        // Formulario
-        document.getElementById('form-envio').addEventListener('submit', async (e) => {
-            e.preventDefault(); 
-            const btn = e.target.querySelector('button');
-            btn.innerHTML = 'Guardando...';
+        // GUARDAR ORDEN DE OPERACIÓN (OP) CON CÓDIGO AUTOGENERADO
+        document.getElementById('form-op').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-guardar-op');
+            btn.innerText = 'Generando OP...';
             btn.disabled = true;
 
-            const tracking = document.getElementById('tracking').value.toUpperCase();
-            const destino = document.getElementById('destino').value;
-            const peso = document.getElementById('peso').value;
+            // Generar correlativo automático de OP (Ej: OP-2026-8492)
+            const numeroOpAuto = `OP-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
-            const { error } = await db.from('shipments').insert([{
-                tracking_number: tracking,
-                destination_address: destino,
-                weight_kg: peso,
-                current_status: 'CREADO' 
-            }]);
+            const payload = {
+                op_number: numeroOpAuto,
+                client_name: document.getElementById('op-cliente').value,
+                destination_city: document.getElementById('op-localidad').value,
+                origin_address: document.getElementById('op-origen').value,
+                destination_address: document.getElementById('op-destino').value,
+                carrier_company: document.getElementById('op-transporte').value,
+                driver_name: document.getElementById('op-chofer').value,
+                driver_dni: document.getElementById('op-dni-chofer').value || null,
+                unit_type: document.getElementById('op-unidad').value,
+                vehicle_plate: document.getElementById('op-patente-principal').value.toUpperCase(),
+                trailer_plate: document.getElementById('op-patente-acoplado').value.toUpperCase() || null,
+                status: 'PROGRAMADO'
+            };
+
+            const { error } = await db.from('trips').insert([payload]);
 
             if (error) {
-                alert('Error al registrar el paquete: ' + error.message);
+                alert('Error al crear la OP: ' + error.message);
             } else {
-                e.target.reset(); 
+                alert(`¡Orden de Operación creada con éxito!\nNúmero de OP Asignado: ${numeroOpAuto}`);
+                cerrarModalOP();
+                cargarTrips();
             }
 
-            btn.innerHTML = 'Ingresar al Sistema';
+            btn.innerText = 'Generar OP Automática';
             btn.disabled = false;
         });
 
-        cargarEnvios();
+        cargarTodo();
 
-        // Escuchador en tiempo real
-        db.channel('custom-all-channel')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'shipments' }, () => {
-                cargarEnvios(); 
-            })
+        // Escuchadores Realtime
+        db.channel('realtime-trips')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'trips' }, () => cargarTrips())
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'shipments' }, () => cargarEnvios())
             .subscribe();
     </script>
 </body>
