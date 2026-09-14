@@ -21,15 +21,14 @@
                 </div>
             </div>
 
-            <!-- NAV TABS -->
-            <nav class="flex bg-slate-800 p-1 rounded-xl gap-1 border border-slate-700">
-                <button onclick="cambiarModulo('modulo-1')" id="tab-modulo-1" class="tab-btn active-tab px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 bg-blue-600 text-white">
+            <nav class="flex bg-slate-800 p-1 rounded-xl gap-1 border border-slate-700 overflow-x-auto w-full md:w-auto">
+                <button onclick="cambiarModulo('modulo-1')" id="tab-modulo-1" class="tab-btn active-tab px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 bg-blue-600 text-white whitespace-nowrap">
                     <span>✍️</span> Mod. 1: Operativa
                 </button>
-                <button onclick="cambiarModulo('modulo-2')" id="tab-modulo-2" class="tab-btn px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all flex items-center gap-2">
+                <button onclick="cambiarModulo('modulo-2')" id="tab-modulo-2" class="tab-btn px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all flex items-center gap-2 whitespace-nowrap">
                     <span>📊</span> Mod. 2: Dashboard
                 </button>
-                <button onclick="cambiarModulo('modulo-3')" id="tab-modulo-3" class="tab-btn px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all flex items-center gap-2">
+                <button onclick="cambiarModulo('modulo-3')" id="tab-modulo-3" class="tab-btn px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all flex items-center gap-2 whitespace-nowrap">
                     <span>📥</span> Mod. 3: Histórico
                 </button>
             </nav>
@@ -42,12 +41,12 @@
         <!-- MÓDULO 1: INGRESOS Y MODIFICACIONES        -->
         <!-- ========================================== -->
         <section id="modulo-1" class="modulo-content space-y-6">
-            <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm gap-4">
                 <div>
                     <h2 class="text-lg font-bold text-slate-800">Módulo 1: Ingresos y Modificaciones</h2>
                     <p class="text-xs text-slate-500">Carga de nuevas Órdenes de Operación (OP) y edición de viajes activos.</p>
                 </div>
-                <button onclick="abrirModalOP()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition-colors shadow flex items-center gap-2">
+                <button onclick="abrirModalOP()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition-colors shadow flex items-center justify-center gap-2">
                     <span>➕</span> Crear Orden de Operación
                 </button>
             </div>
@@ -55,7 +54,7 @@
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                 <h3 class="text-md font-bold text-slate-800 mb-4">Gestión de OPs Activas</h3>
                 <div class="overflow-x-auto rounded-lg border border-slate-200">
-                    <table class="w-full text-left text-sm text-slate-600">
+                    <table class="w-full text-left text-sm text-slate-600 min-w-[800px]">
                         <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase font-semibold text-slate-500">
                             <tr>
                                 <th class="p-3">Nº OP</th>
@@ -73,19 +72,16 @@
         </section>
 
         <!-- ========================================== -->
-        <!-- MÓDULO 2: DASHBOARD ESTRATÉGICO            -->
+        <!-- MÓDULO 2: DASHBOARD                        -->
         <!-- ========================================== -->
         <section id="modulo-2" class="modulo-content hidden space-y-4">
             
-            <!-- Barra de Filtros -->
-            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-end">
-                <div class="flex-1 w-full">
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div class="w-full">
                     <label class="block text-xs font-bold text-slate-500 mb-1">Filtrar por Cliente</label>
-                    <select id="filtro-cliente" onchange="aplicarFiltrosDash()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
-                        <option value="TODOS">Todos los clientes</option>
-                    </select>
+                    <select id="filtro-cliente" onchange="aplicarFiltrosDash()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white"><option value="TODOS">Todos los clientes</option></select>
                 </div>
-                <div class="flex-1 w-full">
+                <div class="w-full">
                     <label class="block text-xs font-bold text-slate-500 mb-1">Estado del Viaje</label>
                     <select id="filtro-estado" onchange="aplicarFiltrosDash()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
                         <option value="TODOS">Todos los estados</option>
@@ -95,18 +91,13 @@
                         <option value="CANCELADO">Cancelado</option>
                     </select>
                 </div>
-                <div class="flex-1 w-full">
+                <div class="w-full">
                     <label class="block text-xs font-bold text-slate-500 mb-1">Fecha de Creación</label>
                     <input type="date" id="filtro-fecha" onchange="aplicarFiltrosDash()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
                 </div>
-                <div>
-                    <button onclick="limpiarFiltros()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2 rounded-lg text-sm transition-colors w-full md:w-auto">
-                        Limpiar
-                    </button>
-                </div>
+                <button onclick="limpiarFiltrosDash()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2 rounded-lg text-sm transition-colors w-full">Limpiar</button>
             </div>
 
-            <!-- KPIs Dinámicos de OPs -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
                     <p class="text-xs font-semibold uppercase text-slate-400">Total OPs (Filtradas)</p>
@@ -126,11 +117,10 @@
                 </div>
             </div>
 
-            <!-- Tabla de Resultados Filtrados -->
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                 <h3 class="text-md font-bold text-slate-800 mb-4">Monitor de Operaciones</h3>
                 <div class="overflow-x-auto rounded-lg border border-slate-200">
-                    <table class="w-full text-left text-sm text-slate-600">
+                    <table class="w-full text-left text-sm text-slate-600 min-w-[800px]">
                         <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase font-semibold text-slate-500">
                             <tr>
                                 <th class="p-3">Nº OP</th>
@@ -150,29 +140,65 @@
         <!-- ========================================== -->
         <!-- MÓDULO 3: HISTÓRICO & EXPORTACIÓN          -->
         <!-- ========================================== -->
-        <section id="modulo-3" class="modulo-content hidden space-y-6">
+        <section id="modulo-3" class="modulo-content hidden space-y-4">
+            
             <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                 <div>
                     <h2 class="text-lg font-bold text-slate-800">Módulo 3: Histórico, Reportes & Descargas</h2>
-                    <p class="text-xs text-slate-500">Consolidado general de operaciones y exportación a Excel.</p>
+                    <p class="text-xs text-slate-500">Aplica filtros para acotar la búsqueda y exporta los resultados a CSV.</p>
                 </div>
-                <button onclick="exportarOPsCSV()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-4 py-2 rounded-lg text-sm transition-colors shadow flex items-center gap-2">
-                    <span>📥</span> Exportar OPs a Excel (CSV)
+                <button onclick="exportarOPsCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-lg text-sm transition-colors shadow flex items-center justify-center gap-2">
+                    <span>📥</span> Exportar Resultados (CSV)
                 </button>
             </div>
 
+            <!-- Filtros Avanzados Histórico -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+                <div class="w-full md:col-span-2">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Cliente</label>
+                    <select id="filtro-hist-cliente" onchange="aplicarFiltrosHist()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white"><option value="TODOS">Todos</option></select>
+                </div>
+                <div class="w-full md:col-span-1">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Chofer</label>
+                    <select id="filtro-hist-chofer" onchange="aplicarFiltrosHist()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white"><option value="TODOS">Todos</option></select>
+                </div>
+                <div class="w-full md:col-span-1">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Estado</label>
+                    <select id="filtro-hist-estado" onchange="aplicarFiltrosHist()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
+                        <option value="TODOS">Todos</option>
+                        <option value="FINALIZADO">Finalizado</option>
+                        <option value="PROGRAMADO">Programado</option>
+                        <option value="EN_CURSO">En Curso</option>
+                        <option value="CANCELADO">Cancelado</option>
+                    </select>
+                </div>
+                <div class="w-full md:col-span-1">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Desde Fecha</label>
+                    <input type="date" id="filtro-hist-desde" onchange="aplicarFiltrosHist()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
+                </div>
+                <div class="w-full md:col-span-1">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Hasta Fecha</label>
+                    <input type="date" id="filtro-hist-hasta" onchange="aplicarFiltrosHist()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
+                </div>
+                <div class="w-full md:col-span-6 flex justify-end">
+                    <button onclick="limpiarFiltrosHist()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-6 py-2 rounded-lg text-sm transition-colors w-full md:w-auto">Limpiar Filtros</button>
+                </div>
+            </div>
+
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <h3 class="text-md font-bold text-slate-800 mb-4">Archivo Histórico de Operaciones</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-md font-bold text-slate-800">Resultados de la Búsqueda</h3>
+                    <span id="contador-hist" class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full">0 registros</span>
+                </div>
                 <div class="overflow-x-auto rounded-lg border border-slate-200">
-                    <table class="w-full text-left text-sm text-slate-600">
+                    <table class="w-full text-left text-sm text-slate-600 min-w-[900px]">
                         <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase font-semibold text-slate-500">
                             <tr>
                                 <th class="p-3">Nº OP</th>
                                 <th class="p-3">Cliente</th>
                                 <th class="p-3">Origen / Destino</th>
-                                <th class="p-3">Transporte</th>
-                                <th class="p-3">Chofer</th>
-                                <th class="p-3">Patentes</th>
+                                <th class="p-3">Transporte / Chofer</th>
+                                <th class="p-3">Estado</th>
                                 <th class="p-3">Fecha</th>
                             </tr>
                         </thead>
@@ -184,9 +210,7 @@
 
     </main>
 
-    <!-- ========================================== -->
-    <!-- MODAL CREAR/EDITAR OP                      -->
-    <!-- ========================================== -->
+    <!-- MODAL CREAR/EDITAR OP -->
     <div id="modal-op" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
@@ -195,8 +219,6 @@
             </div>
 
             <form id="form-op" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                <!-- ESTADO (Para poder mover OPs a Finalizado o En Curso) -->
                 <div class="md:col-span-2 flex items-center gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
                     <label class="text-sm font-bold text-slate-700">Estado de Operación:</label>
                     <select id="op-estado" class="border border-slate-300 rounded-lg p-1.5 text-sm bg-white font-bold text-slate-800">
@@ -208,14 +230,14 @@
                 </div>
 
                 <div class="md:col-span-2 text-xs font-bold uppercase text-blue-600 tracking-wider mt-2">1. Cliente y Destino</div>
-                <div><label class="block text-xs font-bold text-slate-600 mb-1">Cliente Comercial *</label><input type="text" id="op-cliente" required class="w-full border border-slate-300 rounded-lg p-2 text-sm"></div>
-                <div><label class="block text-xs font-bold text-slate-600 mb-1">Localidad de Destino *</label><input type="text" id="op-localidad" required class="w-full border border-slate-300 rounded-lg p-2 text-sm"></div>
-                <div><label class="block text-xs font-bold text-slate-600 mb-1">Dirección de Origen *</label><input type="text" id="op-origen" required class="w-full border border-slate-300 rounded-lg p-2 text-sm"></div>
-                <div><label class="block text-xs font-bold text-slate-600 mb-1">Dirección de Destino *</label><input type="text" id="op-destino" required class="w-full border border-slate-300 rounded-lg p-2 text-sm"></div>
+                <div><label class="block text-xs font-bold text-slate-600 mb-1">Cliente Comercial *</label><input type="text" id="op-cliente" required class="w-full border border-slate-300 rounded-lg p-2 text-sm uppercase"></div>
+                <div><label class="block text-xs font-bold text-slate-600 mb-1">Localidad de Destino *</label><input type="text" id="op-localidad" required class="w-full border border-slate-300 rounded-lg p-2 text-sm uppercase"></div>
+                <div><label class="block text-xs font-bold text-slate-600 mb-1">Dirección de Origen *</label><input type="text" id="op-origen" required class="w-full border border-slate-300 rounded-lg p-2 text-sm uppercase"></div>
+                <div><label class="block text-xs font-bold text-slate-600 mb-1">Dirección de Destino *</label><input type="text" id="op-destino" required class="w-full border border-slate-300 rounded-lg p-2 text-sm uppercase"></div>
 
                 <div class="md:col-span-2 text-xs font-bold uppercase text-blue-600 tracking-wider mt-2">2. Empresa, Chofer y Vehículo</div>
-                <div><label class="block text-xs font-bold text-slate-600 mb-1">Empresa de Transporte *</label><input type="text" id="op-transporte" required class="w-full border border-slate-300 rounded-lg p-2 text-sm"></div>
-                <div><label class="block text-xs font-bold text-slate-600 mb-1">Nombre del Chofer *</label><input type="text" id="op-chofer" required class="w-full border border-slate-300 rounded-lg p-2 text-sm"></div>
+                <div><label class="block text-xs font-bold text-slate-600 mb-1">Empresa de Transporte *</label><input type="text" id="op-transporte" required class="w-full border border-slate-300 rounded-lg p-2 text-sm uppercase"></div>
+                <div><label class="block text-xs font-bold text-slate-600 mb-1">Nombre del Chofer *</label><input type="text" id="op-chofer" required class="w-full border border-slate-300 rounded-lg p-2 text-sm uppercase"></div>
                 <div><label class="block text-xs font-bold text-slate-600 mb-1">DNI del Chofer</label><input type="text" id="op-dni-chofer" class="w-full border border-slate-300 rounded-lg p-2 text-sm"></div>
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1">Tipo de Unidad *</label>
@@ -244,9 +266,10 @@
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let tripsCache = [];
+        let historicoFiltrado = []; // Arreglo vital para que la exportación sea selectiva
         let editandoId = null;
 
-        // CONMUTADOR DE MÓDULOS
+        // CONMUTADOR
         function cambiarModulo(idModulo) {
             document.querySelectorAll('.modulo-content').forEach(sec => sec.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -259,21 +282,15 @@
             btnActivo.classList.remove('text-slate-400');
         }
 
-        // MODAL
         function abrirModalOP() { 
             editandoId = null; 
             document.getElementById('form-op').reset();
             document.getElementById('op-estado').value = "PROGRAMADO";
             document.getElementById('modal-titulo').innerText = "🚛 Alta de Orden de Operación (OP)";
-            document.getElementById('btn-guardar-op').innerText = "Generar OP";
             document.getElementById('modal-op').classList.remove('hidden'); 
         }
 
-        function cerrarModalOP() { 
-            document.getElementById('modal-op').classList.add('hidden'); 
-            document.getElementById('form-op').reset();
-            editandoId = null;
-        }
+        function cerrarModalOP() { document.getElementById('modal-op').classList.add('hidden'); }
 
         function editarOP(id) {
             const op = tripsCache.find(t => t.id === id);
@@ -293,7 +310,6 @@
             document.getElementById('op-patente-acoplado').value = op.trailer_plate || '';
 
             document.getElementById('modal-titulo').innerText = `✏️ Editar OP: ${op.op_number}`;
-            document.getElementById('btn-guardar-op').innerText = "Guardar Cambios";
             document.getElementById('modal-op').classList.remove('hidden');
         }
 
@@ -303,136 +319,132 @@
             cargarTrips();
         }
 
-        // CARGA Y RENDERIZADO GENERAL
         async function cargarTrips() {
             const { data, error } = await db.from('trips').select('*').order('id', { ascending: false });
             if (error) return console.error(error);
 
             tripsCache = data;
-            actualizarSelectClientes();
+            historicoFiltrado = data; // Al iniciar, el histórico son todos los datos
+            
+            actualizarSelectsDinamicos();
             renderizarModulo1(data);
-            aplicarFiltrosDash(); // Actualiza Módulo 2 automáticamente
-            renderizarModulo3(data);
+            aplicarFiltrosDash(); 
+            aplicarFiltrosHist(); 
         }
 
-        // EXTRAER CLIENTES ÚNICOS PARA EL FILTRO DEL DASHBOARD
-        function actualizarSelectClientes() {
-            const select = document.getElementById('filtro-cliente');
-            const valorActual = select.value;
+        // Llenar listas desplegables (Mod 2 y Mod 3)
+        function actualizarSelectsDinamicos() {
             const clientes = [...new Set(tripsCache.map(t => t.client_name))].sort();
+            const choferes = [...new Set(tripsCache.map(t => t.driver_name))].sort();
             
-            select.innerHTML = '<option value="TODOS">Todos los clientes</option>';
-            clientes.forEach(c => select.innerHTML += `<option value="${c}">${c}</option>`);
+            const renderOptions = (arr) => '<option value="TODOS">Todos</option>' + arr.map(i => `<option value="${i}">${i}</option>`).join('');
             
-            if (clientes.includes(valorActual)) select.value = valorActual;
+            document.getElementById('filtro-cliente').innerHTML = renderOptions(clientes);
+            document.getElementById('filtro-hist-cliente').innerHTML = renderOptions(clientes);
+            document.getElementById('filtro-hist-chofer').innerHTML = renderOptions(choferes);
         }
 
-        // LÓGICA DE FILTROS DEL MÓDULO 2 (DASHBOARD)
         function aplicarFiltrosDash() {
             const cliente = document.getElementById('filtro-cliente').value;
             const estado = document.getElementById('filtro-estado').value;
             const fecha = document.getElementById('filtro-fecha').value;
 
-            let filtrados = tripsCache;
+            let f = tripsCache;
+            if (cliente !== 'TODOS') f = f.filter(t => t.client_name === cliente);
+            if (estado !== 'TODOS') f = f.filter(t => t.status === estado);
+            if (fecha) f = f.filter(t => t.created_at.startsWith(fecha));
 
-            if (cliente !== 'TODOS') filtrados = filtrados.filter(t => t.client_name === cliente);
-            if (estado !== 'TODOS') filtrados = filtrados.filter(t => t.status === estado);
-            if (fecha) filtrados = filtrados.filter(t => t.created_at.startsWith(fecha));
+            document.getElementById('kpi-dash-total').innerText = f.length;
+            document.getElementById('kpi-dash-prog').innerText = f.filter(t => t.status === 'PROGRAMADO').length;
+            document.getElementById('kpi-dash-curso').innerText = f.filter(t => t.status === 'EN_CURSO').length;
+            document.getElementById('kpi-dash-fin').innerText = f.filter(t => t.status === 'FINALIZADO').length;
 
-            // Actualizar KPIs del Dashboard
-            document.getElementById('kpi-dash-total').innerText = filtrados.length;
-            document.getElementById('kpi-dash-prog').innerText = filtrados.filter(t => t.status === 'PROGRAMADO').length;
-            document.getElementById('kpi-dash-curso').innerText = filtrados.filter(t => t.status === 'EN_CURSO').length;
-            document.getElementById('kpi-dash-fin').innerText = filtrados.filter(t => t.status === 'FINALIZADO').length;
-
-            // Renderizar Tabla Filtrada
             const tbody = document.getElementById('tabla-dash-resultados');
-            if(filtrados.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">No hay operaciones para los filtros seleccionados.</td></tr>`;
-                return;
-            }
-
-            let html = '';
-            filtrados.forEach(t => {
-                let badge = 'bg-blue-100 text-blue-800';
-                if(t.status === 'EN_CURSO') badge = 'bg-amber-100 text-amber-800';
-                if(t.status === 'FINALIZADO') badge = 'bg-emerald-100 text-emerald-800';
-                if(t.status === 'CANCELADO') badge = 'bg-red-100 text-red-800';
-
-                html += `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="p-3 font-mono font-bold text-slate-800">${t.op_number}</td>
-                        <td class="p-3 font-semibold">${t.client_name}</td>
-                        <td class="p-3">${t.destination_city}</td>
-                        <td class="p-3">${t.carrier_company}</td>
-                        <td class="p-3">${new Date(t.created_at).toLocaleDateString('es-AR')}</td>
-                        <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${badge}">${t.status}</span></td>
-                    </tr>
-                `;
-            });
-            tbody.innerHTML = html;
+            if(f.length === 0) return tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center">No hay resultados.</td></tr>`;
+            
+            tbody.innerHTML = f.map(t => `
+                <tr class="hover:bg-slate-50 text-xs">
+                    <td class="p-3 font-mono font-bold">${t.op_number}</td>
+                    <td class="p-3 font-semibold">${t.client_name}</td>
+                    <td class="p-3">${t.destination_city}</td>
+                    <td class="p-3">${t.carrier_company}</td>
+                    <td class="p-3">${new Date(t.created_at).toLocaleDateString('es-AR')}</td>
+                    <td class="p-3"><span class="font-bold text-blue-700">${t.status}</span></td>
+                </tr>
+            `).join('');
         }
 
-        function limpiarFiltros() {
+        function limpiarFiltrosDash() {
             document.getElementById('filtro-cliente').value = 'TODOS';
             document.getElementById('filtro-estado').value = 'TODOS';
             document.getElementById('filtro-fecha').value = '';
             aplicarFiltrosDash();
         }
 
-        // RENDER MÓDULO 1
-        function renderizarModulo1(data) {
-            const tbody = document.getElementById('tabla-mod1-ops');
-            if(data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin OPs registradas.</td></tr>`;
-                return;
-            }
-            let html = '';
-            data.forEach(t => {
-                let badge = 'bg-blue-100 text-blue-800';
-                if(t.status === 'EN_CURSO') badge = 'bg-amber-100 text-amber-800';
-                if(t.status === 'FINALIZADO') badge = 'bg-emerald-100 text-emerald-800';
-                if(t.status === 'CANCELADO') badge = 'bg-red-100 text-red-800';
+        // LÓGICA FILTROS MÓDULO 3 (HISTÓRICO)
+        function aplicarFiltrosHist() {
+            const cliente = document.getElementById('filtro-hist-cliente').value;
+            const chofer = document.getElementById('filtro-hist-chofer').value;
+            const estado = document.getElementById('filtro-hist-estado').value;
+            const desde = document.getElementById('filtro-hist-desde').value;
+            const hasta = document.getElementById('filtro-hist-hasta').value;
 
-                html += `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="p-3 font-mono font-bold text-slate-800">${t.op_number}</td>
-                        <td class="p-3 font-bold text-slate-800">${t.client_name}</td>
-                        <td class="p-3">${t.destination_city}</td>
-                        <td class="p-3">${t.driver_name} (${t.carrier_company})</td>
-                        <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${badge}">${t.status}</span></td>
-                        <td class="p-3 flex justify-center gap-2">
-                            <button onclick="editarOP(${t.id})" class="text-xs bg-amber-100 text-amber-700 font-bold px-2 py-1 rounded hover:bg-amber-200">Editar</button>
-                            <button onclick="eliminarOP(${t.id})" class="text-xs bg-red-100 text-red-600 font-bold px-2 py-1 rounded hover:bg-red-200">Eliminar</button>
-                        </td>
-                    </tr>
-                `;
+            historicoFiltrado = tripsCache.filter(t => {
+                const fechaOp = t.created_at.slice(0, 10); // "YYYY-MM-DD"
+                
+                if (cliente !== 'TODOS' && t.client_name !== cliente) return false;
+                if (chofer !== 'TODOS' && t.driver_name !== chofer) return false;
+                if (estado !== 'TODOS' && t.status !== estado) return false;
+                if (desde && fechaOp < desde) return false;
+                if (hasta && fechaOp > hasta) return false;
+                return true;
             });
-            tbody.innerHTML = html;
+
+            document.getElementById('contador-hist').innerText = `${historicoFiltrado.length} registros`;
+
+            const tbody = document.getElementById('tabla-historico-ops');
+            if(historicoFiltrado.length === 0) return tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">Sin datos para los filtros aplicados.</td></tr>`;
+            
+            tbody.innerHTML = historicoFiltrado.map(t => {
+                let badge = t.status === 'FINALIZADO' ? 'text-emerald-700' : 'text-slate-600';
+                return `
+                <tr class="hover:bg-slate-50 transition-colors text-xs">
+                    <td class="p-3 font-mono font-bold text-slate-800">${t.op_number}</td>
+                    <td class="p-3">${t.client_name}</td>
+                    <td class="p-3 truncate max-w-xs">${t.origin_address} ➔ ${t.destination_city}</td>
+                    <td class="p-3">${t.carrier_company}<br><span class="text-slate-400 font-mono">${t.driver_name}</span></td>
+                    <td class="p-3 font-bold ${badge}">${t.status}</td>
+                    <td class="p-3">${new Date(t.created_at).toLocaleDateString('es-AR')}</td>
+                </tr>`
+            }).join('');
         }
 
-        // RENDER MÓDULO 3
-        function renderizarModulo3(data) {
-            const tbody = document.getElementById('tabla-historico-ops');
-            if(data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">Sin historial disponible.</td></tr>`;
-                return;
-            }
-            let html = '';
-            data.forEach(t => {
-                html += `
-                    <tr class="hover:bg-slate-50 transition-colors text-xs">
-                        <td class="p-3 font-mono font-bold text-slate-800">${t.op_number}</td>
-                        <td class="p-3">${t.client_name}</td>
-                        <td class="p-3">${t.origin_address} ➔ ${t.destination_city}</td>
-                        <td class="p-3">${t.carrier_company}</td>
-                        <td class="p-3">${t.driver_name}</td>
-                        <td class="p-3 font-mono">${t.vehicle_plate}</td>
-                        <td class="p-3">${new Date(t.created_at).toLocaleDateString('es-AR')}</td>
-                    </tr>
-                `;
-            });
-            tbody.innerHTML = html;
+        function limpiarFiltrosHist() {
+            document.getElementById('filtro-hist-cliente').value = 'TODOS';
+            document.getElementById('filtro-hist-chofer').value = 'TODOS';
+            document.getElementById('filtro-hist-estado').value = 'TODOS';
+            document.getElementById('filtro-hist-desde').value = '';
+            document.getElementById('filtro-hist-hasta').value = '';
+            aplicarFiltrosHist();
+        }
+
+        function renderizarModulo1(data) {
+            const tbody = document.getElementById('tabla-mod1-ops');
+            if(data.length === 0) return tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center">Sin OPs.</td></tr>`;
+            
+            tbody.innerHTML = data.map(t => `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="p-3 font-mono font-bold text-slate-800">${t.op_number}</td>
+                    <td class="p-3 font-bold">${t.client_name}</td>
+                    <td class="p-3">${t.destination_city}</td>
+                    <td class="p-3 text-xs">${t.driver_name}</td>
+                    <td class="p-3 text-xs font-bold">${t.status}</td>
+                    <td class="p-3 flex justify-center gap-2">
+                        <button onclick="editarOP(${t.id})" class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded">Editar</button>
+                        <button onclick="eliminarOP(${t.id})" class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded">Eliminar</button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
         // GUARDAR OP
@@ -444,44 +456,47 @@
 
             const payload = {
                 status: document.getElementById('op-estado').value,
-                client_name: document.getElementById('op-cliente').value,
-                destination_city: document.getElementById('op-localidad').value,
-                origin_address: document.getElementById('op-origen').value,
-                destination_address: document.getElementById('op-destino').value,
-                carrier_company: document.getElementById('op-transporte').value,
-                driver_name: document.getElementById('op-chofer').value,
-                driver_dni: document.getElementById('op-dni-chofer').value || null,
+                client_name: document.getElementById('op-cliente').value.toUpperCase(),
+                destination_city: document.getElementById('op-localidad').value.toUpperCase(),
+                origin_address: document.getElementById('op-origen').value.toUpperCase(),
+                destination_address: document.getElementById('op-destino').value.toUpperCase(),
+                carrier_company: document.getElementById('op-transporte').value.toUpperCase(),
+                driver_name: document.getElementById('op-chofer').value.toUpperCase(),
+                driver_dni: document.getElementById('op-dni-chofer').value,
                 unit_type: document.getElementById('op-unidad').value,
                 vehicle_plate: document.getElementById('op-patente-principal').value.toUpperCase(),
-                trailer_plate: document.getElementById('op-patente-acoplado').value.toUpperCase() || null,
+                trailer_plate: document.getElementById('op-patente-acoplado').value.toUpperCase()
             };
 
             if (editandoId) {
                 const { error } = await db.from('trips').update(payload).eq('id', editandoId);
-                if (error) alert(error.message);
-                else { cerrarModalOP(); cargarTrips(); }
+                if (error) alert(error.message); else { cerrarModalOP(); cargarTrips(); }
             } else {
                 payload.op_number = `OP-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
                 const { error } = await db.from('trips').insert([payload]);
-                if (error) alert(error.message);
-                else { cerrarModalOP(); cargarTrips(); }
+                if (error) alert(error.message); else { cerrarModalOP(); cargarTrips(); }
             }
             btn.disabled = false;
         });
 
+        // EXPORTADOR VINCULADO AL FILTRO DEL MÓDULO 3
         function exportarOPsCSV() {
-            if (tripsCache.length === 0) return alert("Sin datos para exportar.");
+            if (historicoFiltrado.length === 0) return alert("No hay datos que coincidan con los filtros aplicados para exportar.");
+            
             const headers = ["Nro OP", "Estado", "Cliente", "Origen", "Destino", "Localidad", "Transporte", "Chofer", "Patente", "Fecha"];
-            const rows = tripsCache.map(t => [
+            
+            // Usamos historicoFiltrado en lugar de tripsCache
+            const rows = historicoFiltrado.map(t => [
                 `"${t.op_number}"`, `"${t.status}"`, `"${t.client_name}"`, `"${t.origin_address}"`, `"${t.destination_address}"`,
                 `"${t.destination_city}"`, `"${t.carrier_company}"`, `"${t.driver_name}"`, `"${t.vehicle_plate}"`,
                 `"${new Date(t.created_at).toLocaleDateString('es-AR')}"`
             ]);
+
             const csv = "\uFEFF" + [headers.join(";"), ...rows.map(r => r.join(";"))].join("\n");
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = `LogiTrack_OPs_${new Date().toISOString().slice(0,10)}.csv`;
+            link.download = `LogiTrack_Reporte_${new Date().toISOString().slice(0,10)}.csv`;
             link.click();
         }
 
