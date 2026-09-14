@@ -3,112 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LogiTrack - Centro de Control & Gestión de Viajes</title>
+    <title>LogiTrack TMS - Sistema de Gestión</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 min-h-screen">
 
-    <!-- Header / Navbar -->
+    <!-- Header Principal -->
     <header class="bg-slate-900 text-white p-4 shadow-lg sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
                 <span class="text-2xl">🚛</span>
                 <div>
                     <h1 class="font-bold text-xl leading-none">LogiTrack TMS</h1>
-                    <span class="text-xs text-slate-400">Gestión de Operaciones & Viajes</span>
+                    <span class="text-xs text-slate-400">Sistema Integral de Gestión Logística</span>
                 </div>
             </div>
-            <div class="flex items-center gap-3">
-                <button onclick="abrirModalOP()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition-colors shadow flex items-center gap-2">
-                    <span>➕</span> Nueva Orden de Operación (OP)
+
+            <!-- NAV TABS (BARRA DE MÓDULOS) -->
+            <nav class="flex bg-slate-800 p-1 rounded-xl gap-1 border border-slate-700">
+                <button onclick="cambiarModulo('modulo-1')" id="tab-modulo-1" class="tab-btn active-tab px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2">
+                    <span>✍️</span> Mod. 1: Operativa
                 </button>
-            </div>
+                <button onclick="cambiarModulo('modulo-2')" id="tab-modulo-2" class="tab-btn px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all flex items-center gap-2">
+                    <span>📊</span> Mod. 2: Dashboard
+                </button>
+                <button onclick="cambiarModulo('modulo-3')" id="tab-modulo-3" class="tab-btn px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all flex items-center gap-2">
+                    <span>📥</span> Mod. 3: Histórico
+                </button>
+            </nav>
         </div>
     </header>
 
-    <main class="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
+    <main class="p-4 md:p-6 max-w-7xl mx-auto">
 
-        <!-- METRICAS / KPIs -->
-        <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                <p class="text-xs font-semibold uppercase text-slate-400">Total Viajes / OPs</p>
-                <p id="kpi-ops" class="text-2xl font-black text-slate-800 mt-1">0</p>
+        <!-- ========================================== -->
+        <!-- MÓDULO 1: INGRESOS Y MODIFICACIONES       -->
+        <!-- ========================================== -->
+        <section id="modulo-1" class="modulo-content space-y-6">
+            <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">Módulo 1: Ingresos y Modificaciones</h2>
+                    <p class="text-xs text-slate-500">Carga de nuevas Órdenes de Operación (OP) y edición de viajes activos.</p>
+                </div>
+                <button onclick="abrirModalOP()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition-colors shadow flex items-center gap-2">
+                    <span>➕</span> Crear Orden de Operación (OP)
+                </button>
             </div>
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-blue-500">
-                <p class="text-xs font-semibold uppercase text-blue-600">En Almacén (Creados)</p>
-                <p id="kpi-creado" class="text-2xl font-black text-blue-700 mt-1">0</p>
-            </div>
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-amber-500">
-                <p class="text-xs font-semibold uppercase text-amber-600">En Reparto</p>
-                <p id="kpi-reparto" class="text-2xl font-black text-amber-700 mt-1">0</p>
-            </div>
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-emerald-500">
-                <p class="text-xs font-semibold uppercase text-emerald-600">Entregados</p>
-                <p id="kpi-entregado" class="text-2xl font-black text-emerald-700 mt-1">0</p>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="text-md font-bold text-slate-800 mb-4">Gestión de OPs Activas</h3>
+                <div class="overflow-x-auto rounded-lg border border-slate-200">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase font-semibold text-slate-500">
+                            <tr>
+                                <th class="p-3">Nº OP</th>
+                                <th class="p-3">Cliente</th>
+                                <th class="p-3">Destino</th>
+                                <th class="p-3">Chofer / Transporte</th>
+                                <th class="p-3">Estado</th>
+                                <th class="p-3 text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-mod1-ops" class="divide-y divide-slate-100">
+                            <!-- Datos dinámicos -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
-        <!-- SECCION VIAJES Y OPERACIONES -->
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                    <span>📋 Órdenes de Operación (OPs) & Viajes Programados</span>
-                </h2>
-                <!-- BOTÓN EXPORTAR CSV -->
-                <button onclick="exportarOPsCSV()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition-colors shadow flex items-center gap-2">
+        <!-- ========================================== -->
+        <!-- MÓDULO 2: DASHBOARD (CENTRO DE CONTROL)   -->
+        <!-- ========================================== -->
+        <section id="modulo-2" class="modulo-content hidden space-y-6">
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <h2 class="text-lg font-bold text-slate-800">Módulo 2: Centro de Control & KPIs</h2>
+                <p class="text-xs text-slate-500">Monitorización visual en tiempo real de la flota y los paquetes.</p>
+            </div>
+
+            <!-- KPIs -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                    <p class="text-xs font-semibold uppercase text-slate-400">Total OPs Programadas</p>
+                    <p id="kpi-ops" class="text-2xl font-black text-slate-800 mt-1">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-blue-500">
+                    <p class="text-xs font-semibold uppercase text-blue-600">En Almacén</p>
+                    <p id="kpi-creado" class="text-2xl font-black text-blue-700 mt-1">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-amber-500">
+                    <p class="text-xs font-semibold uppercase text-amber-600">En Transit / Reparto</p>
+                    <p id="kpi-reparto" class="text-2xl font-black text-amber-700 mt-1">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-emerald-500">
+                    <p class="text-xs font-semibold uppercase text-emerald-600">Entregados</p>
+                    <p id="kpi-entregado" class="text-2xl font-black text-emerald-700 mt-1">0</p>
+                </div>
+            </div>
+
+            <!-- MONITOR DE ENVÍOS -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-md font-bold text-slate-800">📦 Monitor de Envíos con Códigos QR</h3>
+                </div>
+                <div class="overflow-x-auto rounded-lg border border-slate-200">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase font-semibold text-slate-500">
+                            <tr>
+                                <th class="p-3">Tracking</th>
+                                <th class="p-3 text-center">Código QR</th>
+                                <th class="p-3">Destino</th>
+                                <th class="p-3">Estado Actual</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-envios-dash" class="divide-y divide-slate-100">
+                            <!-- Datos dinámicos -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- MÓDULO 3: HISTÓRICO, REPORTES & CSV        -->
+        <!-- ========================================== -->
+        <section id="modulo-3" class="modulo-content hidden space-y-6">
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">Módulo 3: Histórico, Reportes & Descargas</h2>
+                    <p class="text-xs text-slate-500">Consolidado general de operaciones y exportación de datos a CSV/Excel.</p>
+                </div>
+                <button onclick="exportarOPsCSV()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-4 py-2 rounded-lg text-sm transition-colors shadow flex items-center gap-2">
                     <span>📥</span> Exportar OPs a Excel (CSV)
                 </button>
             </div>
 
-            <div class="overflow-x-auto rounded-lg border border-slate-200">
-                <table class="w-full text-left text-sm text-slate-600">
-                    <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase font-semibold text-slate-500">
-                        <tr>
-                            <th class="p-3">Nº OP</th>
-                            <th class="p-3">Cliente</th>
-                            <th class="p-3">Destino / Localidad</th>
-                            <th class="p-3">Transporte / Chofer</th>
-                            <th class="p-3">Unidad / Patentes</th>
-                            <th class="p-3">Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabla-ops" class="divide-y divide-slate-100">
-                        <tr><td colspan="6" class="p-4 text-center text-slate-400">Cargando viajes...</td></tr>
-                    </tbody>
-                </table>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="text-md font-bold text-slate-800 mb-4">Archivo Histórico de Operaciones</h3>
+                <div class="overflow-x-auto rounded-lg border border-slate-200">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase font-semibold text-slate-500">
+                            <tr>
+                                <th class="p-3">Nº OP</th>
+                                <th class="p-3">Cliente</th>
+                                <th class="p-3">Origen / Destino</th>
+                                <th class="p-3">Transporte</th>
+                                <th class="p-3">Chofer</th>
+                                <th class="p-3">Patentes</th>
+                                <th class="p-3">Fecha de Carga</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-historico-ops" class="divide-y divide-slate-100">
+                            <!-- Datos dinámicos -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-
-        <!-- MONITOR DE PAQUETES/ENVÍOS -->
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-                <h2 class="text-lg font-bold text-slate-800">📦 Monitor de Envíos Individuales</h2>
-                <input type="text" id="buscador" onkeyup="filtrarTabla()" placeholder="🔍 Buscar por tracking o destino..." class="w-full sm:w-64 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-            </div>
-
-            <div class="overflow-x-auto rounded-lg border border-slate-200">
-                <table class="w-full text-left text-sm text-slate-600">
-                    <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase font-semibold text-slate-500">
-                        <tr>
-                            <th class="p-3">Tracking</th>
-                            <th class="p-3 text-center">Código QR</th>
-                            <th class="p-3">Destino</th>
-                            <th class="p-3">Peso</th>
-                            <th class="p-3">Estado Actual</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabla-envios" class="divide-y divide-slate-100">
-                        <!-- Envíos cargados vía JS -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        </section>
 
     </main>
 
-    <!-- MODAL DE CREACIÓN DE NUEVA OP -->
+    <!-- MODAL CREAR OP -->
     <div id="modal-op" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
@@ -118,7 +175,6 @@
 
             <form id="form-op" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="md:col-span-2 text-xs font-bold uppercase text-blue-600 tracking-wider">1. Cliente y Destino</div>
-                
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1">Cliente Comercial *</label>
                     <input type="text" id="op-cliente" required placeholder="Ej: Arcor S.A." class="w-full border border-slate-300 rounded-lg p-2 text-sm">
@@ -137,7 +193,6 @@
                 </div>
 
                 <div class="md:col-span-2 text-xs font-bold uppercase text-blue-600 tracking-wider mt-2">2. Empresa, Chofer y Vehículo</div>
-
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1">Empresa de Transporte *</label>
                     <input type="text" id="op-transporte" required placeholder="Ej: Logística Expreso Sur" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
@@ -187,13 +242,24 @@
         let enviosCache = [];
         let tripsCache = [];
 
-        function abrirModalOP() {
-            document.getElementById('modal-op').classList.remove('hidden');
+        // CONMUTADOR DE MÓDULOS
+        function cambiarModulo(idModulo) {
+            document.querySelectorAll('.modulo-content').forEach(sec => sec.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('text-slate-400');
+            });
+
+            document.getElementById(idModulo).classList.remove('hidden');
+            const btnActivo = document.getElementById('tab-' + idModulo);
+            btnActivo.classList.add('bg-blue-600', 'text-white');
+            btnActivo.classList.remove('text-slate-400');
         }
 
-        function cerrarModalOP() {
-            document.getElementById('modal-op').classList.add('hidden');
-            document.getElementById('form-op').reset();
+        function abrirModalOP() { document.getElementById('modal-op').classList.remove('hidden'); }
+        function cerrarModalOP() { 
+            document.getElementById('modal-op').classList.add('hidden'); 
+            document.getElementById('form-op').reset(); 
         }
 
         async function cargarTodo() {
@@ -202,171 +268,126 @@
 
         async function cargarTrips() {
             const { data, error } = await db.from('trips').select('*').order('id', { ascending: false });
-            if (error) return console.error("Error cargando viajes:", error);
+            if (error) return console.error(error);
 
             tripsCache = data;
             document.getElementById('kpi-ops').innerText = data.length;
 
-            const tabla = document.getElementById('tabla-ops');
-            if (data.length === 0) {
-                tabla.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">No hay órdenes de operación registradas. Presiona "Nueva Orden de Operación" para crear una.</td></tr>`;
+            renderizarModulo1(data);
+            renderizarModulo3(data);
+        }
+
+        function renderizarModulo1(data) {
+            const tbody = document.getElementById('tabla-mod1-ops');
+            if(data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin OPs registradas.</td></tr>`;
                 return;
             }
 
             let html = '';
-            data.forEach(trip => {
+            data.forEach(t => {
                 html += `
                     <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="p-3 font-mono font-bold text-blue-700">${trip.op_number}</td>
-                        <td class="p-3 font-bold text-slate-800">${trip.client_name}</td>
-                        <td class="p-3">
-                            <div class="font-medium text-slate-800">${trip.destination_city}</div>
-                            <div class="text-xs text-slate-500">${trip.destination_address}</div>
-                        </td>
-                        <td class="p-3">
-                            <div class="font-medium text-slate-800">${trip.carrier_company}</div>
-                            <div class="text-xs text-slate-500">👨‍✈️ ${trip.driver_name}</div>
-                        </td>
-                        <td class="p-3">
-                            <div class="text-xs font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded w-fit">${trip.unit_type}</div>
-                            <div class="font-mono text-xs text-slate-600 mt-1">🚘 ${trip.vehicle_plate} ${trip.trailer_plate ? '/ ' + trip.trailer_plate : ''}</div>
-                        </td>
-                        <td class="p-3">
-                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200">
-                                ${trip.status}
-                            </span>
+                        <td class="p-3 font-mono font-bold text-blue-700">${t.op_number}</td>
+                        <td class="p-3 font-bold text-slate-800">${t.client_name}</td>
+                        <td class="p-3">${t.destination_city}</td>
+                        <td class="p-3">${t.driver_name} (${t.carrier_company})</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold bg-blue-100 text-blue-800">${t.status}</span></td>
+                        <td class="p-3 text-center">
+                            <button onclick="eliminarOP(${t.id})" class="text-xs bg-red-100 text-red-600 font-bold px-2 py-1 rounded hover:bg-red-200">Eliminar</button>
                         </td>
                     </tr>
                 `;
             });
-            tabla.innerHTML = html;
+            tbody.innerHTML = html;
+        }
+
+        function renderizarModulo3(data) {
+            const tbody = document.getElementById('tabla-historico-ops');
+            if(data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">Sin historial disponible.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            data.forEach(t => {
+                html += `
+                    <tr class="hover:bg-slate-50 transition-colors text-xs">
+                        <td class="p-3 font-mono font-bold text-slate-800">${t.op_number}</td>
+                        <td class="p-3">${t.client_name}</td>
+                        <td class="p-3">${t.origin_address} ➔ ${t.destination_city}</td>
+                        <td class="p-3">${t.carrier_company}</td>
+                        <td class="p-3">${t.driver_name}</td>
+                        <td class="p-3 font-mono">${t.vehicle_plate}</td>
+                        <td class="p-3">${new Date(t.created_at).toLocaleDateString('es-AR')}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
         }
 
         async function cargarEnvios() {
-            const { data, error } = await db.from('shipments').select('*');
-            if (error) return console.error("Error cargando envíos:", error);
+            const { data } = await db.from('shipments').select('*');
+            if (!data) return;
 
             enviosCache = data;
             document.getElementById('kpi-creado').innerText = data.filter(e => e.current_status === 'CREADO').length;
             document.getElementById('kpi-reparto').innerText = data.filter(e => e.current_status === 'EN_REPARTO').length;
             document.getElementById('kpi-entregado').innerText = data.filter(e => e.current_status === 'ENTREGADO').length;
 
-            renderizarTablaEnvios();
-        }
-
-        function renderizarTablaEnvios() {
-            const tabla = document.getElementById('tabla-envios');
-            const textoBusqueda = document.getElementById('buscador').value.toLowerCase();
-            
-            let enviosFiltrados = enviosCache.filter(e => 
-                e.tracking_number.toLowerCase().includes(textoBusqueda) || 
-                e.destination_address.toLowerCase().includes(textoBusqueda)
-            );
-
-            if (enviosFiltrados.length === 0) {
-                tabla.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">No se encontraron envíos.</td></tr>`;
-                return;
-            }
-
-            let filasHtml = '';
-            enviosFiltrados.forEach(envio => {
-                let badgeStyle = 'bg-blue-100 text-blue-800 border-blue-200';
-                if (envio.current_status === 'ENTREGADO') badgeStyle = 'bg-emerald-100 text-emerald-800 border-emerald-200';
-                else if (envio.current_status === 'EN_REPARTO') badgeStyle = 'bg-amber-100 text-amber-800 border-amber-200';
-
-                filasHtml += `
+            const tbody = document.getElementById('tabla-envios-dash');
+            let html = '';
+            data.forEach(e => {
+                html += `
                     <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="p-3 font-mono font-bold text-slate-900">${envio.tracking_number}</td>
-                        <td class="p-3 text-center">
-                            <div id="qr-${envio.tracking_number}" class="inline-block p-1 bg-white border border-slate-200 rounded shadow-sm"></div>
-                        </td>
-                        <td class="p-3 font-medium text-slate-700">${envio.destination_address}</td>
-                        <td class="p-3 text-slate-500">${envio.weight_kg} kg</td>
-                        <td class="p-3">
-                            <span class="px-2.5 py-1 rounded-full text-xs font-bold border ${badgeStyle}">
-                                ${envio.current_status}
-                            </span>
-                        </td>
+                        <td class="p-3 font-mono font-bold text-slate-900">${e.tracking_number}</td>
+                        <td class="p-3 text-center"><div id="qr-${e.tracking_number}" class="inline-block p-1 bg-white border border-slate-200 rounded"></div></td>
+                        <td class="p-3">${e.destination_address}</td>
+                        <td class="p-3"><span class="px-2 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">${e.current_status}</span></td>
                     </tr>
                 `;
             });
-
-            tabla.innerHTML = filasHtml;
+            tbody.innerHTML = html;
 
             setTimeout(() => {
-                enviosFiltrados.forEach(envio => {
-                    const contenedor = document.getElementById(`qr-${envio.tracking_number}`);
-                    if (contenedor) {
-                        contenedor.innerHTML = '';
-                        new QRCode(contenedor, {
-                            text: envio.tracking_number,
-                            width: 52,
-                            height: 52,
-                            colorDark : "#0f172a",
-                            colorLight : "#ffffff",
-                            correctLevel : QRCode.CorrectLevel.L
-                        });
-                    }
+                data.forEach(e => {
+                    const c = document.getElementById(`qr-${e.tracking_number}`);
+                    if(c) { c.innerHTML = ''; new QRCode(c, { text: e.tracking_number, width: 44, height: 44 }); }
                 });
             }, 50);
         }
 
-        function filtrarTabla() {
-            renderizarTablaEnvios();
+        async function eliminarOP(id) {
+            if(!confirm("¿Seguro que deseas eliminar esta Orden de Operación?")) return;
+            await db.from('trips').delete().eq('id', id);
+            cargarTrips();
         }
 
-        // FUNCIÓN PARA EXPORTAR A CSV (EXCEL)
         function exportarOPsCSV() {
-            if (tripsCache.length === 0) {
-                alert("No hay datos de Órdenes de Operación para exportar.");
-                return;
-            }
-
-            // Encabezados del archivo CSV
-            const headers = ["Nro OP", "Cliente", "Origen", "Destino", "Localidad", "Transporte", "Chofer", "DNI Chofer", "Tipo Unidad", "Patente Tractor", "Patente Acoplado", "Estado", "Fecha Creacion"];
-            
-            // Filas de datos
-            const rows = tripsCache.map(trip => [
-                `"${trip.op_number || ''}"`,
-                `"${trip.client_name || ''}"`,
-                `"${trip.origin_address || ''}"`,
-                `"${trip.destination_address || ''}"`,
-                `"${trip.destination_city || ''}"`,
-                `"${trip.carrier_company || ''}"`,
-                `"${trip.driver_name || ''}"`,
-                `"${trip.driver_dni || ''}"`,
-                `"${trip.unit_type || ''}"`,
-                `"${trip.vehicle_plate || ''}"`,
-                `"${trip.trailer_plate || ''}"`,
-                `"${trip.status || ''}"`,
-                `"${new Date(trip.created_at).toLocaleString('es-AR')}"`
+            if (tripsCache.length === 0) return alert("Sin datos para exportar.");
+            const headers = ["Nro OP", "Cliente", "Origen", "Destino", "Localidad", "Transporte", "Chofer", "Patente", "Fecha"];
+            const rows = tripsCache.map(t => [
+                `"${t.op_number}"`, `"${t.client_name}"`, `"${t.origin_address}"`, `"${t.destination_address}"`,
+                `"${t.destination_city}"`, `"${t.carrier_company}"`, `"${t.driver_name}"`, `"${t.vehicle_plate}"`,
+                `"${new Date(t.created_at).toLocaleDateString('es-AR')}"`
             ]);
-
-            // Unir filas con comas y saltos de línea (Añadimos BOM \uFEFF para soportar tildes/caracteres en Excel)
-            const csvContent = "\uFEFF" + [headers.join(";"), ...rows.map(e => e.join(";"))].join("\n");
-
-            // Crear y descargar el archivo
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
+            const csv = "\uFEFF" + [headers.join(";"), ...rows.map(r => r.join(";"))].join("\n");
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
-            link.setAttribute("href", url);
-            link.setAttribute("download", `LogiTrack_OPs_${new Date().toISOString().slice(0,10)}.csv`);
-            document.body.appendChild(link);
+            link.href = URL.createObjectURL(blob);
+            link.download = `LogiTrack_OPs_${new Date().toISOString().slice(0,10)}.csv`;
             link.click();
-            document.body.removeChild(link);
         }
 
-        // GUARDAR ORDEN DE OPERACIÓN (OP)
         document.getElementById('form-op').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-guardar-op');
-            btn.innerText = 'Generando OP...';
+            btn.innerText = 'Guardando...';
             btn.disabled = true;
 
-            const numeroOpAuto = `OP-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-
+            const opNum = `OP-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
             const payload = {
-                op_number: numeroOpAuto,
+                op_number: opNum,
                 client_name: document.getElementById('op-cliente').value,
                 destination_city: document.getElementById('op-localidad').value,
                 origin_address: document.getElementById('op-origen').value,
@@ -381,26 +402,13 @@
             };
 
             const { error } = await db.from('trips').insert([payload]);
-
-            if (error) {
-                alert('Error al crear la OP: ' + error.message);
-            } else {
-                alert(`¡Orden de Operación creada con éxito!\nNúmero de OP Asignado: ${numeroOpAuto}`);
-                cerrarModalOP();
-                cargarTrips();
-            }
-
+            if(error) alert(error.message);
+            else { alert(`OP creada: ${opNum}`); cerrarModalOP(); cargarTrips(); }
             btn.innerText = 'Generar OP Automática';
             btn.disabled = false;
         });
 
         cargarTodo();
-
-        // Escuchadores Realtime
-        db.channel('realtime-trips')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'trips' }, () => cargarTrips())
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'shipments' }, () => cargarEnvios())
-            .subscribe();
     </script>
 </body>
 </html>
