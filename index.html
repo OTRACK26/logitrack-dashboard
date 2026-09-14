@@ -21,9 +21,9 @@
                 </div>
             </div>
 
-            <!-- NAV TABS (BARRA DE MÓDULOS) -->
+            <!-- NAV TABS -->
             <nav class="flex bg-slate-800 p-1 rounded-xl gap-1 border border-slate-700">
-                <button onclick="cambiarModulo('modulo-1')" id="tab-modulo-1" class="tab-btn active-tab px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2">
+                <button onclick="cambiarModulo('modulo-1')" id="tab-modulo-1" class="tab-btn active-tab px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 bg-blue-600 text-white">
                     <span>✍️</span> Mod. 1: Operativa
                 </button>
                 <button onclick="cambiarModulo('modulo-2')" id="tab-modulo-2" class="tab-btn px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all flex items-center gap-2">
@@ -38,9 +38,7 @@
 
     <main class="p-4 md:p-6 max-w-7xl mx-auto">
 
-        <!-- ========================================== -->
-        <!-- MÓDULO 1: INGRESOS Y MODIFICACIONES       -->
-        <!-- ========================================== -->
+        <!-- MÓDULO 1: INGRESOS Y MODIFICACIONES -->
         <section id="modulo-1" class="modulo-content space-y-6">
             <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                 <div>
@@ -48,7 +46,7 @@
                     <p class="text-xs text-slate-500">Carga de nuevas Órdenes de Operación (OP) y edición de viajes activos.</p>
                 </div>
                 <button onclick="abrirModalOP()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition-colors shadow flex items-center gap-2">
-                    <span>➕</span> Crear Orden de Operación (OP)
+                    <span>➕</span> Crear Orden de Operación
                 </button>
             </div>
 
@@ -74,19 +72,16 @@
             </div>
         </section>
 
-        <!-- ========================================== -->
-        <!-- MÓDULO 2: DASHBOARD (CENTRO DE CONTROL)   -->
-        <!-- ========================================== -->
+        <!-- MÓDULO 2: DASHBOARD -->
         <section id="modulo-2" class="modulo-content hidden space-y-6">
             <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                 <h2 class="text-lg font-bold text-slate-800">Módulo 2: Centro de Control & KPIs</h2>
                 <p class="text-xs text-slate-500">Monitorización visual en tiempo real de la flota y los paquetes.</p>
             </div>
 
-            <!-- KPIs -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                    <p class="text-xs font-semibold uppercase text-slate-400">Total OPs Programadas</p>
+                    <p class="text-xs font-semibold uppercase text-slate-400">Total OPs</p>
                     <p id="kpi-ops" class="text-2xl font-black text-slate-800 mt-1">0</p>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-blue-500">
@@ -94,7 +89,7 @@
                     <p id="kpi-creado" class="text-2xl font-black text-blue-700 mt-1">0</p>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-amber-500">
-                    <p class="text-xs font-semibold uppercase text-amber-600">En Transit / Reparto</p>
+                    <p class="text-xs font-semibold uppercase text-amber-600">En Reparto</p>
                     <p id="kpi-reparto" class="text-2xl font-black text-amber-700 mt-1">0</p>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-emerald-500">
@@ -103,11 +98,8 @@
                 </div>
             </div>
 
-            <!-- MONITOR DE ENVÍOS -->
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-md font-bold text-slate-800">📦 Monitor de Envíos con Códigos QR</h3>
-                </div>
+                <h3 class="text-md font-bold text-slate-800 mb-4">📦 Monitor de Envíos con Códigos QR</h3>
                 <div class="overflow-x-auto rounded-lg border border-slate-200">
                     <table class="w-full text-left text-sm text-slate-600">
                         <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase font-semibold text-slate-500">
@@ -118,22 +110,18 @@
                                 <th class="p-3">Estado Actual</th>
                             </tr>
                         </thead>
-                        <tbody id="tabla-envios-dash" class="divide-y divide-slate-100">
-                            <!-- Datos dinámicos -->
-                        </tbody>
+                        <tbody id="tabla-envios-dash" class="divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <!-- ========================================== -->
-        <!-- MÓDULO 3: HISTÓRICO, REPORTES & CSV        -->
-        <!-- ========================================== -->
+        <!-- MÓDULO 3: HISTÓRICO & EXPORTACIÓN -->
         <section id="modulo-3" class="modulo-content hidden space-y-6">
             <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                 <div>
                     <h2 class="text-lg font-bold text-slate-800">Módulo 3: Histórico, Reportes & Descargas</h2>
-                    <p class="text-xs text-slate-500">Consolidado general de operaciones y exportación de datos a CSV/Excel.</p>
+                    <p class="text-xs text-slate-500">Consolidado general de operaciones y exportación a Excel.</p>
                 </div>
                 <button onclick="exportarOPsCSV()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-4 py-2 rounded-lg text-sm transition-colors shadow flex items-center gap-2">
                     <span>📥</span> Exportar OPs a Excel (CSV)
@@ -152,12 +140,10 @@
                                 <th class="p-3">Transporte</th>
                                 <th class="p-3">Chofer</th>
                                 <th class="p-3">Patentes</th>
-                                <th class="p-3">Fecha de Carga</th>
+                                <th class="p-3">Fecha</th>
                             </tr>
                         </thead>
-                        <tbody id="tabla-historico-ops" class="divide-y divide-slate-100">
-                            <!-- Datos dinámicos -->
-                        </tbody>
+                        <tbody id="tabla-historico-ops" class="divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
             </div>
@@ -165,46 +151,25 @@
 
     </main>
 
-    <!-- MODAL CREAR OP -->
+    <!-- MODAL CREAR/EDITAR OP -->
     <div id="modal-op" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
-                <h3 class="text-lg font-bold text-slate-900">🚛 Alta de Orden de Operación (OP)</h3>
+                <h3 id="modal-titulo" class="text-lg font-bold text-slate-900">🚛 Alta de Orden de Operación (OP)</h3>
                 <button onclick="cerrarModalOP()" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
             </div>
 
             <form id="form-op" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="md:col-span-2 text-xs font-bold uppercase text-blue-600 tracking-wider">1. Cliente y Destino</div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Cliente Comercial *</label>
-                    <input type="text" id="op-cliente" required placeholder="Ej: Arcor S.A." class="w-full border border-slate-300 rounded-lg p-2 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Localidad de Destino *</label>
-                    <input type="text" id="op-localidad" required placeholder="Ej: Rosario, Santa Fe" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Dirección de Origen *</label>
-                    <input type="text" id="op-origen" required placeholder="Ej: Av. Brasil 1200, CABA" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Dirección de Destino *</label>
-                    <input type="text" id="op-destino" required placeholder="Ej: San Martín 450, Centro" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
-                </div>
+                <div><label class="block text-xs font-bold text-slate-600 mb-1">Cliente Comercial *</label><input type="text" id="op-cliente" required class="w-full border border-slate-300 rounded-lg p-2 text-sm"></div>
+                <div><label class="block text-xs font-bold text-slate-600 mb-1">Localidad de Destino *</label><input type="text" id="op-localidad" required class="w-full border border-slate-300 rounded-lg p-2 text-sm"></div>
+                <div><label class="block text-xs font-bold text-slate-600 mb-1">Dirección de Origen *</label><input type="text" id="op-origen" required class="w-full border border-slate-300 rounded-lg p-2 text-sm"></div>
+                <div><label class="block text-xs font-bold text-slate-600 mb-1">Dirección de Destino *</label><input type="text" id="op-destino" required class="w-full border border-slate-300 rounded-lg p-2 text-sm"></div>
 
                 <div class="md:col-span-2 text-xs font-bold uppercase text-blue-600 tracking-wider mt-2">2. Empresa, Chofer y Vehículo</div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Empresa de Transporte *</label>
-                    <input type="text" id="op-transporte" required placeholder="Ej: Logística Expreso Sur" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Nombre del Chofer *</label>
-                    <input type="text" id="op-chofer" required placeholder="Ej: Mario Gómez" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">DNI del Chofer</label>
-                    <input type="text" id="op-dni-chofer" placeholder="Ej: 28456789" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
-                </div>
+                <div><label class="block text-xs font-bold text-slate-600 mb-1">Empresa de Transporte *</label><input type="text" id="op-transporte" required class="w-full border border-slate-300 rounded-lg p-2 text-sm"></div>
+                <div><label class="block text-xs font-bold text-slate-600 mb-1">Nombre del Chofer *</label><input type="text" id="op-chofer" required class="w-full border border-slate-300 rounded-lg p-2 text-sm"></div>
+                <div><label class="block text-xs font-bold text-slate-600 mb-1">DNI del Chofer</label><input type="text" id="op-dni-chofer" class="w-full border border-slate-300 rounded-lg p-2 text-sm"></div>
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1">Tipo de Unidad *</label>
                     <select id="op-unidad" required class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
@@ -215,20 +180,12 @@
                         <option value="Balancín">Camión Balancín</option>
                     </select>
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Patente Camión / Tractor *</label>
-                    <input type="text" id="op-patente-principal" required placeholder="Ej: AA123CD" class="w-full border border-slate-300 rounded-lg p-2 text-sm uppercase">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Patente Acoplado / Semi (Opcional)</label>
-                    <input type="text" id="op-patente-acoplado" placeholder="Ej: AB987ZX" class="w-full border border-slate-300 rounded-lg p-2 text-sm uppercase">
-                </div>
+                <div><label class="block text-xs font-bold text-slate-600 mb-1">Patente Camión / Tractor *</label><input type="text" id="op-patente-principal" required class="w-full border border-slate-300 rounded-lg p-2 text-sm uppercase"></div>
+                <div><label class="block text-xs font-bold text-slate-600 mb-1">Patente Acoplado / Semi</label><input type="text" id="op-patente-acoplado" class="w-full border border-slate-300 rounded-lg p-2 text-sm uppercase"></div>
 
                 <div class="md:col-span-2 flex justify-end gap-3 mt-4 pt-4 border-t border-slate-200">
                     <button type="button" onclick="cerrarModalOP()" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-semibold">Cancelar</button>
-                    <button type="submit" id="btn-guardar-op" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold shadow">
-                        Generar OP Automática
-                    </button>
+                    <button type="submit" id="btn-guardar-op" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold shadow">Generar OP</button>
                 </div>
             </form>
         </div>
@@ -239,8 +196,8 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4YXhpZmxxbmRhcml5cG9uc3p6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg3NzMyNTcsImV4cCI6MjEwNDM0OTI1N30.5A5Nmi409xd85-kZD9vOdtX1sALggGq7ilvBSVL-JAg';
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let enviosCache = [];
         let tripsCache = [];
+        let editandoId = null; // Variable para saber si estamos editando o creando
 
         // CONMUTADOR DE MÓDULOS
         function cambiarModulo(idModulo) {
@@ -249,19 +206,59 @@
                 btn.classList.remove('bg-blue-600', 'text-white');
                 btn.classList.add('text-slate-400');
             });
-
             document.getElementById(idModulo).classList.remove('hidden');
             const btnActivo = document.getElementById('tab-' + idModulo);
             btnActivo.classList.add('bg-blue-600', 'text-white');
             btnActivo.classList.remove('text-slate-400');
         }
 
-        function abrirModalOP() { document.getElementById('modal-op').classList.remove('hidden'); }
-        function cerrarModalOP() { 
-            document.getElementById('modal-op').classList.add('hidden'); 
-            document.getElementById('form-op').reset(); 
+        // GESTIÓN DEL MODAL
+        function abrirModalOP() { 
+            editandoId = null; 
+            document.getElementById('form-op').reset();
+            document.getElementById('modal-titulo').innerText = "🚛 Alta de Orden de Operación (OP)";
+            document.getElementById('btn-guardar-op').innerText = "Generar OP Automática";
+            document.getElementById('modal-op').classList.remove('hidden'); 
         }
 
+        function cerrarModalOP() { 
+            document.getElementById('modal-op').classList.add('hidden'); 
+            document.getElementById('form-op').reset();
+            editandoId = null;
+        }
+
+        function editarOP(id) {
+            const op = tripsCache.find(t => t.id === id);
+            if (!op) return;
+
+            editandoId = id; // Guardamos el ID que estamos editando
+            
+            // Llenar el formulario con los datos existentes
+            document.getElementById('op-cliente').value = op.client_name;
+            document.getElementById('op-localidad').value = op.destination_city;
+            document.getElementById('op-origen').value = op.origin_address;
+            document.getElementById('op-destino').value = op.destination_address;
+            document.getElementById('op-transporte').value = op.carrier_company;
+            document.getElementById('op-chofer').value = op.driver_name;
+            document.getElementById('op-dni-chofer').value = op.driver_dni || '';
+            document.getElementById('op-unidad').value = op.unit_type;
+            document.getElementById('op-patente-principal').value = op.vehicle_plate;
+            document.getElementById('op-patente-acoplado').value = op.trailer_plate || '';
+
+            // Cambiar textos del modal
+            document.getElementById('modal-titulo').innerText = `✏️ Editar OP: ${op.op_number}`;
+            document.getElementById('btn-guardar-op').innerText = "Guardar Cambios";
+
+            document.getElementById('modal-op').classList.remove('hidden');
+        }
+
+        async function eliminarOP(id) {
+            if(!confirm("¿Seguro que deseas eliminar esta Orden de Operación? Esta acción no se puede deshacer.")) return;
+            await db.from('trips').delete().eq('id', id);
+            cargarTrips();
+        }
+
+        // CARGA DE DATOS
         async function cargarTodo() {
             await Promise.all([cargarTrips(), cargarEnvios()]);
         }
@@ -293,7 +290,8 @@
                         <td class="p-3">${t.destination_city}</td>
                         <td class="p-3">${t.driver_name} (${t.carrier_company})</td>
                         <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold bg-blue-100 text-blue-800">${t.status}</span></td>
-                        <td class="p-3 text-center">
+                        <td class="p-3 flex gap-2">
+                            <button onclick="editarOP(${t.id})" class="text-xs bg-amber-100 text-amber-700 font-bold px-2 py-1 rounded hover:bg-amber-200">Editar</button>
                             <button onclick="eliminarOP(${t.id})" class="text-xs bg-red-100 text-red-600 font-bold px-2 py-1 rounded hover:bg-red-200">Eliminar</button>
                         </td>
                     </tr>
@@ -330,7 +328,6 @@
             const { data } = await db.from('shipments').select('*');
             if (!data) return;
 
-            enviosCache = data;
             document.getElementById('kpi-creado').innerText = data.filter(e => e.current_status === 'CREADO').length;
             document.getElementById('kpi-reparto').innerText = data.filter(e => e.current_status === 'EN_REPARTO').length;
             document.getElementById('kpi-entregado').innerText = data.filter(e => e.current_status === 'ENTREGADO').length;
@@ -357,11 +354,52 @@
             }, 50);
         }
 
-        async function eliminarOP(id) {
-            if(!confirm("¿Seguro que deseas eliminar esta Orden de Operación?")) return;
-            await db.from('trips').delete().eq('id', id);
-            cargarTrips();
-        }
+        // GUARDAR O ACTUALIZAR OP
+        document.getElementById('form-op').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-guardar-op');
+            btn.innerText = 'Guardando...';
+            btn.disabled = true;
+
+            const payload = {
+                client_name: document.getElementById('op-cliente').value,
+                destination_city: document.getElementById('op-localidad').value,
+                origin_address: document.getElementById('op-origen').value,
+                destination_address: document.getElementById('op-destino').value,
+                carrier_company: document.getElementById('op-transporte').value,
+                driver_name: document.getElementById('op-chofer').value,
+                driver_dni: document.getElementById('op-dni-chofer').value || null,
+                unit_type: document.getElementById('op-unidad').value,
+                vehicle_plate: document.getElementById('op-patente-principal').value.toUpperCase(),
+                trailer_plate: document.getElementById('op-patente-acoplado').value.toUpperCase() || null,
+            };
+
+            if (editandoId) {
+                // Modo Edición: Actualizar registro existente
+                const { error } = await db.from('trips').update(payload).eq('id', editandoId);
+                if (error) {
+                    alert('Error al actualizar la OP: ' + error.message);
+                } else {
+                    cerrarModalOP();
+                    cargarTrips();
+                }
+            } else {
+                // Modo Creación: Insertar nueva OP con número automático
+                const opNum = `OP-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+                payload.op_number = opNum;
+                payload.status = 'PROGRAMADO';
+                
+                const { error } = await db.from('trips').insert([payload]);
+                if (error) {
+                    alert('Error al crear la OP: ' + error.message);
+                } else {
+                    cerrarModalOP();
+                    cargarTrips();
+                }
+            }
+
+            btn.disabled = false;
+        });
 
         function exportarOPsCSV() {
             if (tripsCache.length === 0) return alert("Sin datos para exportar.");
@@ -379,36 +417,13 @@
             link.click();
         }
 
-        document.getElementById('form-op').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btn-guardar-op');
-            btn.innerText = 'Guardando...';
-            btn.disabled = true;
-
-            const opNum = `OP-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-            const payload = {
-                op_number: opNum,
-                client_name: document.getElementById('op-cliente').value,
-                destination_city: document.getElementById('op-localidad').value,
-                origin_address: document.getElementById('op-origen').value,
-                destination_address: document.getElementById('op-destino').value,
-                carrier_company: document.getElementById('op-transporte').value,
-                driver_name: document.getElementById('op-chofer').value,
-                driver_dni: document.getElementById('op-dni-chofer').value || null,
-                unit_type: document.getElementById('op-unidad').value,
-                vehicle_plate: document.getElementById('op-patente-principal').value.toUpperCase(),
-                trailer_plate: document.getElementById('op-patente-acoplado').value.toUpperCase() || null,
-                status: 'PROGRAMADO'
-            };
-
-            const { error } = await db.from('trips').insert([payload]);
-            if(error) alert(error.message);
-            else { alert(`OP creada: ${opNum}`); cerrarModalOP(); cargarTrips(); }
-            btn.innerText = 'Generar OP Automática';
-            btn.disabled = false;
-        });
-
         cargarTodo();
+
+        // Escuchadores Realtime
+        db.channel('realtime-trips')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'trips' }, () => cargarTrips())
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'shipments' }, () => cargarEnvios())
+            .subscribe();
     </script>
 </body>
 </html>
