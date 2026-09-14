@@ -152,24 +152,19 @@
                 </button>
             </div>
 
-            <!-- FILTROS AVANZADOS HISTÓRICO -->
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                
                 <div class="w-full">
                     <label class="block text-xs font-bold text-slate-500 mb-1">Nº de OP</label>
-                    <input type="text" id="filtro-hist-op" onkeyup="aplicarFiltrosHist()" placeholder="Ej: OP-2026..." class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white uppercase">
+                    <input type="text" id="filtro-hist-op" onkeyup="aplicarFiltrosHist()" placeholder="Ej: 260900001" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white uppercase">
                 </div>
-                
                 <div class="w-full">
                     <label class="block text-xs font-bold text-slate-500 mb-1">Cliente</label>
                     <select id="filtro-hist-cliente" onchange="aplicarFiltrosHist()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white"><option value="TODOS">Todos</option></select>
                 </div>
-                
                 <div class="w-full">
                     <label class="block text-xs font-bold text-slate-500 mb-1">Transporte</label>
                     <select id="filtro-hist-transporte" onchange="aplicarFiltrosHist()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white"><option value="TODOS">Todos</option></select>
                 </div>
-                
                 <div class="w-full">
                     <label class="block text-xs font-bold text-slate-500 mb-1">Estado</label>
                     <select id="filtro-hist-estado" onchange="aplicarFiltrosHist()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
@@ -180,27 +175,22 @@
                         <option value="CANCELADO">Cancelado</option>
                     </select>
                 </div>
-
                 <div class="w-full">
                     <label class="block text-xs font-bold text-slate-500 mb-1">Origen (Busca por texto)</label>
                     <input type="text" id="filtro-hist-origen" onkeyup="aplicarFiltrosHist()" placeholder="Ej: Av. Brasil..." class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
                 </div>
-
                 <div class="w-full">
                     <label class="block text-xs font-bold text-slate-500 mb-1">Destino (Busca por texto)</label>
                     <input type="text" id="filtro-hist-destino" onkeyup="aplicarFiltrosHist()" placeholder="Ej: Rosario..." class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
                 </div>
-                
                 <div class="w-full">
                     <label class="block text-xs font-bold text-slate-500 mb-1">Desde Fecha</label>
                     <input type="date" id="filtro-hist-desde" onchange="aplicarFiltrosHist()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
                 </div>
-                
                 <div class="w-full">
                     <label class="block text-xs font-bold text-slate-500 mb-1">Hasta Fecha</label>
                     <input type="date" id="filtro-hist-hasta" onchange="aplicarFiltrosHist()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
                 </div>
-
                 <div class="w-full md:col-span-4 flex justify-end mt-2">
                     <button onclick="limpiarFiltrosHist()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-6 py-2 rounded-lg text-sm transition-colors w-full md:w-auto">Limpiar Todos los Filtros</button>
                 </div>
@@ -353,7 +343,6 @@
             aplicarFiltrosHist(); 
         }
 
-        // Llenar listas desplegables
         function actualizarSelectsDinamicos() {
             const clientes = [...new Set(tripsCache.map(t => t.client_name))].sort();
             const transportes = [...new Set(tripsCache.map(t => t.carrier_company))].sort();
@@ -386,7 +375,7 @@
             
             tbody.innerHTML = f.map(t => `
                 <tr class="hover:bg-slate-50 text-xs">
-                    <td class="p-3 font-mono font-bold">${t.op_number}</td>
+                    <td class="p-3 font-mono font-bold text-slate-800">${t.op_number}</td>
                     <td class="p-3 font-semibold">${t.client_name}</td>
                     <td class="p-3">${t.destination_city}</td>
                     <td class="p-3">${t.carrier_company}</td>
@@ -417,12 +406,10 @@
             historicoFiltrado = tripsCache.filter(t => {
                 const fechaOp = t.created_at.slice(0, 10);
                 
-                // Texto parcial
                 if (op && !t.op_number.toLowerCase().includes(op)) return false;
                 if (origen && !t.origin_address.toLowerCase().includes(origen)) return false;
                 if (destino && !(t.destination_city.toLowerCase().includes(destino) || t.destination_address.toLowerCase().includes(destino))) return false;
                 
-                // Selects y fechas
                 if (cliente !== 'TODOS' && t.client_name !== cliente) return false;
                 if (transporte !== 'TODOS' && t.carrier_company !== transporte) return false;
                 if (estado !== 'TODOS' && t.status !== estado) return false;
@@ -482,6 +469,38 @@
             `).join('');
         }
 
+        // ==========================================
+        // LÓGICA DE GENERACIÓN DE NÚMERO DE OP
+        // ==========================================
+        async function generarNumeroOP() {
+            const fechaActual = new Date();
+            const yy = String(fechaActual.getFullYear()).slice(-2);
+            const mm = String(fechaActual.getMonth() + 1).padStart(2, '0');
+            const prefijo = `${yy}${mm}`; // Ej: "2609"
+
+            // Buscar en la BD la última OP que empiece con este año y mes
+            const { data, error } = await db
+                .from('trips')
+                .select('op_number')
+                .like('op_number', `${prefijo}%`)
+                .order('op_number', { ascending: false })
+                .limit(1);
+
+            let secuencial = 1;
+
+            if (data && data.length > 0) {
+                // Sacamos los últimos 5 dígitos del último registro (ej: "260900014" -> "00014" -> 14)
+                const ultimoNro = data[0].op_number;
+                const ultimoSecuencial = parseInt(ultimoNro.slice(4), 10);
+                if (!isNaN(ultimoSecuencial)) {
+                    secuencial = ultimoSecuencial + 1;
+                }
+            }
+
+            // Convertir el secuencial al formato 00001 y unirlo al prefijo
+            return `${prefijo}${String(secuencial).padStart(5, '0')}`;
+        }
+
         // GUARDAR OP
         document.getElementById('form-op').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -504,10 +523,13 @@
             };
 
             if (editandoId) {
+                // Actualizar
                 const { error } = await db.from('trips').update(payload).eq('id', editandoId);
                 if (error) alert(error.message); else { cerrarModalOP(); cargarTrips(); }
             } else {
-                payload.op_number = `OP-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+                // NUEVA OP: Asignar número autogenerado
+                payload.op_number = await generarNumeroOP();
+                
                 const { error } = await db.from('trips').insert([payload]);
                 if (error) alert(error.message); else { cerrarModalOP(); cargarTrips(); }
             }
