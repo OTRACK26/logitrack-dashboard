@@ -152,17 +152,25 @@
                 </button>
             </div>
 
-            <!-- Filtros Avanzados Histórico -->
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
-                <div class="w-full md:col-span-2">
+            <!-- FILTROS AVANZADOS HISTÓRICO -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                
+                <div class="w-full">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Nº de OP</label>
+                    <input type="text" id="filtro-hist-op" onkeyup="aplicarFiltrosHist()" placeholder="Ej: OP-2026..." class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white uppercase">
+                </div>
+                
+                <div class="w-full">
                     <label class="block text-xs font-bold text-slate-500 mb-1">Cliente</label>
                     <select id="filtro-hist-cliente" onchange="aplicarFiltrosHist()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white"><option value="TODOS">Todos</option></select>
                 </div>
-                <div class="w-full md:col-span-1">
-                    <label class="block text-xs font-bold text-slate-500 mb-1">Chofer</label>
-                    <select id="filtro-hist-chofer" onchange="aplicarFiltrosHist()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white"><option value="TODOS">Todos</option></select>
+                
+                <div class="w-full">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Transporte</label>
+                    <select id="filtro-hist-transporte" onchange="aplicarFiltrosHist()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white"><option value="TODOS">Todos</option></select>
                 </div>
-                <div class="w-full md:col-span-1">
+                
+                <div class="w-full">
                     <label class="block text-xs font-bold text-slate-500 mb-1">Estado</label>
                     <select id="filtro-hist-estado" onchange="aplicarFiltrosHist()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
                         <option value="TODOS">Todos</option>
@@ -172,16 +180,29 @@
                         <option value="CANCELADO">Cancelado</option>
                     </select>
                 </div>
-                <div class="w-full md:col-span-1">
+
+                <div class="w-full">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Origen (Busca por texto)</label>
+                    <input type="text" id="filtro-hist-origen" onkeyup="aplicarFiltrosHist()" placeholder="Ej: Av. Brasil..." class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
+                </div>
+
+                <div class="w-full">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Destino (Busca por texto)</label>
+                    <input type="text" id="filtro-hist-destino" onkeyup="aplicarFiltrosHist()" placeholder="Ej: Rosario..." class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
+                </div>
+                
+                <div class="w-full">
                     <label class="block text-xs font-bold text-slate-500 mb-1">Desde Fecha</label>
                     <input type="date" id="filtro-hist-desde" onchange="aplicarFiltrosHist()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
                 </div>
-                <div class="w-full md:col-span-1">
+                
+                <div class="w-full">
                     <label class="block text-xs font-bold text-slate-500 mb-1">Hasta Fecha</label>
                     <input type="date" id="filtro-hist-hasta" onchange="aplicarFiltrosHist()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
                 </div>
-                <div class="w-full md:col-span-6 flex justify-end">
-                    <button onclick="limpiarFiltrosHist()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-6 py-2 rounded-lg text-sm transition-colors w-full md:w-auto">Limpiar Filtros</button>
+
+                <div class="w-full md:col-span-4 flex justify-end mt-2">
+                    <button onclick="limpiarFiltrosHist()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-6 py-2 rounded-lg text-sm transition-colors w-full md:w-auto">Limpiar Todos los Filtros</button>
                 </div>
             </div>
 
@@ -266,7 +287,7 @@
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let tripsCache = [];
-        let historicoFiltrado = []; // Arreglo vital para que la exportación sea selectiva
+        let historicoFiltrado = [];
         let editandoId = null;
 
         // CONMUTADOR
@@ -324,7 +345,7 @@
             if (error) return console.error(error);
 
             tripsCache = data;
-            historicoFiltrado = data; // Al iniciar, el histórico son todos los datos
+            historicoFiltrado = data; 
             
             actualizarSelectsDinamicos();
             renderizarModulo1(data);
@@ -332,18 +353,19 @@
             aplicarFiltrosHist(); 
         }
 
-        // Llenar listas desplegables (Mod 2 y Mod 3)
+        // Llenar listas desplegables
         function actualizarSelectsDinamicos() {
             const clientes = [...new Set(tripsCache.map(t => t.client_name))].sort();
-            const choferes = [...new Set(tripsCache.map(t => t.driver_name))].sort();
+            const transportes = [...new Set(tripsCache.map(t => t.carrier_company))].sort();
             
             const renderOptions = (arr) => '<option value="TODOS">Todos</option>' + arr.map(i => `<option value="${i}">${i}</option>`).join('');
             
             document.getElementById('filtro-cliente').innerHTML = renderOptions(clientes);
             document.getElementById('filtro-hist-cliente').innerHTML = renderOptions(clientes);
-            document.getElementById('filtro-hist-chofer').innerHTML = renderOptions(choferes);
+            document.getElementById('filtro-hist-transporte').innerHTML = renderOptions(transportes);
         }
 
+        // FILTROS DASHBOARD
         function aplicarFiltrosDash() {
             const cliente = document.getElementById('filtro-cliente').value;
             const estado = document.getElementById('filtro-estado').value;
@@ -381,22 +403,32 @@
             aplicarFiltrosDash();
         }
 
-        // LÓGICA FILTROS MÓDULO 3 (HISTÓRICO)
+        // FILTROS HISTÓRICO
         function aplicarFiltrosHist() {
+            const op = document.getElementById('filtro-hist-op').value.toLowerCase();
             const cliente = document.getElementById('filtro-hist-cliente').value;
-            const chofer = document.getElementById('filtro-hist-chofer').value;
+            const transporte = document.getElementById('filtro-hist-transporte').value;
             const estado = document.getElementById('filtro-hist-estado').value;
+            const origen = document.getElementById('filtro-hist-origen').value.toLowerCase();
+            const destino = document.getElementById('filtro-hist-destino').value.toLowerCase();
             const desde = document.getElementById('filtro-hist-desde').value;
             const hasta = document.getElementById('filtro-hist-hasta').value;
 
             historicoFiltrado = tripsCache.filter(t => {
-                const fechaOp = t.created_at.slice(0, 10); // "YYYY-MM-DD"
+                const fechaOp = t.created_at.slice(0, 10);
                 
+                // Texto parcial
+                if (op && !t.op_number.toLowerCase().includes(op)) return false;
+                if (origen && !t.origin_address.toLowerCase().includes(origen)) return false;
+                if (destino && !(t.destination_city.toLowerCase().includes(destino) || t.destination_address.toLowerCase().includes(destino))) return false;
+                
+                // Selects y fechas
                 if (cliente !== 'TODOS' && t.client_name !== cliente) return false;
-                if (chofer !== 'TODOS' && t.driver_name !== chofer) return false;
+                if (transporte !== 'TODOS' && t.carrier_company !== transporte) return false;
                 if (estado !== 'TODOS' && t.status !== estado) return false;
                 if (desde && fechaOp < desde) return false;
                 if (hasta && fechaOp > hasta) return false;
+                
                 return true;
             });
 
@@ -420,9 +452,12 @@
         }
 
         function limpiarFiltrosHist() {
+            document.getElementById('filtro-hist-op').value = '';
             document.getElementById('filtro-hist-cliente').value = 'TODOS';
-            document.getElementById('filtro-hist-chofer').value = 'TODOS';
+            document.getElementById('filtro-hist-transporte').value = 'TODOS';
             document.getElementById('filtro-hist-estado').value = 'TODOS';
+            document.getElementById('filtro-hist-origen').value = '';
+            document.getElementById('filtro-hist-destino').value = '';
             document.getElementById('filtro-hist-desde').value = '';
             document.getElementById('filtro-hist-hasta').value = '';
             aplicarFiltrosHist();
@@ -479,13 +514,11 @@
             btn.disabled = false;
         });
 
-        // EXPORTADOR VINCULADO AL FILTRO DEL MÓDULO 3
         function exportarOPsCSV() {
             if (historicoFiltrado.length === 0) return alert("No hay datos que coincidan con los filtros aplicados para exportar.");
             
             const headers = ["Nro OP", "Estado", "Cliente", "Origen", "Destino", "Localidad", "Transporte", "Chofer", "Patente", "Fecha"];
             
-            // Usamos historicoFiltrado en lugar de tripsCache
             const rows = historicoFiltrado.map(t => [
                 `"${t.op_number}"`, `"${t.status}"`, `"${t.client_name}"`, `"${t.origin_address}"`, `"${t.destination_address}"`,
                 `"${t.destination_city}"`, `"${t.carrier_company}"`, `"${t.driver_name}"`, `"${t.vehicle_plate}"`,
